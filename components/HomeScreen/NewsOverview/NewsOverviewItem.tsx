@@ -1,3 +1,4 @@
+import {useEffect, useState, useRef} from 'react';
 import {
   Image,
   StyleSheet,
@@ -5,31 +6,91 @@ import {
   View,
   useColorScheme,
   Pressable,
+  GestureResponderEvent,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {popoverActions} from '../../../store/popover-slice';
 import ThreeDots from '../../../assets/menu.png';
+import Popover, {PopoverPlacement} from 'react-native-popover-view';
+import {Colors} from '../../../constants/Color';
+import {Overview} from '../../../screens/Home';
+import PopoverMenu from '../../UI/PopoverMenu';
+import {useNavigation} from '@react-navigation/native';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import {Colors} from '../../../constants/Color';
-import {Overview} from '../../../screens/Home';
+
+import {RootState} from '../../../store';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {NativeStackParamsList} from '../../../navigators/Stack';
+
+// import BottomTabIcon from '../../UI/BottomTabIcon';
+// import ShareIcon from '../../../assets/share.png';
+// import BookmarkIcon from '../../../assets/bookmark.png';
 
 interface NewsOverviewItemProp {
   news: Overview;
+  popoverIsShown: boolean;
+  newsSourcePopoverIsShown: boolean;
+  onHidePopover: () => void;
+  onGetPosition: (pageX: number, pageY: number) => void;
 }
+
+type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
 
 export default function NewsOverviewItem({
   news,
+  onGetPosition,
+  popoverIsShown,
+  newsSourcePopoverIsShown,
+  onHidePopover,
 }: NewsOverviewItemProp): React.JSX.Element {
+  // const [showModal, setShowModal] = useState<boolean>(false);
+  // const popoverIsShown = useSelector<RootState>(state => state.popover.shown);
+  const navigation = useNavigation<NavigationProps>();
+  // const dispatch = useDispatch();
+  const openMenuRef = useRef<Image>(null);
+
+  // Show modal function
+  // const showModalHandler = function () {
+  //   setShowModal(true);
+  //   dispatch(popoverActions.showPopover());
+  // };
+
+  const getPositionHandler = function () {
+    openMenuRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      // console.log(x, y, width, height, pageX, pageY);
+      // console.log(typeof pageX, typeof pageY);
+
+      onGetPosition(pageX, pageY);
+    });
+  };
+
+  // Go to Detail Screen function
+  const goToDetailHanlder = function () {
+    if (popoverIsShown || newsSourcePopoverIsShown) {
+      onHidePopover();
+      return;
+    }
+
+    navigation.push('Detail', {link: news.link});
+  };
+
+  /////////////////
+  // useEffect(() => {
+  //   if (!popoverIsShown) setShowModal(false);
+  // }, [popoverIsShown]);
+
   TimeAgo.addLocale(en);
   const timeAgo = new TimeAgo('en-US');
-  const time = timeAgo.format(new Date(news.pubDate).getTime());
+  const time = timeAgo.format(new Date(news.pubDate).getTime(), 'mini');
 
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
 
   return (
-    <Pressable style={({pressed}) => [styles.item, pressed && styles.pressed]}>
+    <Pressable style={styles.item} onPress={goToDetailHanlder}>
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
@@ -46,19 +107,57 @@ export default function NewsOverviewItem({
         <Text style={[styles.title, {color: activeColor.textPrimary}]}>
           {news.title}
         </Text>
-        <Text style={[styles.author, styles.greyText]}>By VnExpress</Text>
 
+        <Text style={[styles.author, styles.greyText]}>By {news.author}</Text>
         <View style={styles.footer}>
           <View style={styles.footerInnerContainer}>
             <Text style={styles.category}>{news.category}</Text>
             <Text style={[{fontSize: 8}, styles.greyText]}>{`\u25CF`}</Text>
-            <Text style={styles.greyText}>{time}</Text>
+            <Text style={styles.greyText}>{time} ago</Text>
           </View>
 
-          <Image
-            style={[styles.threedots, {tintColor: activeColor.textPrimary}]}
-            source={ThreeDots}
-          />
+          <Pressable
+            // onPress={showModalHandler}
+            onPress={getPositionHandler}
+            style={({pressed}) => [
+              pressed && styles.pressed,
+              pressed && {backgroundColor: '#ccc', borderRadius: 30},
+            ]}>
+            <Image
+              ref={openMenuRef}
+              style={[styles.threedots, {tintColor: activeColor.textPrimary}]}
+              source={ThreeDots}
+            />
+          </Pressable>
+
+          {/* <Popover
+            verticalOffset={-10}
+            placement={PopoverPlacement.BOTTOM}
+            popoverStyle={styles.modal}
+            arrowSize={{
+              width: 0,
+              height: 0,
+            }}
+            backgroundStyle={{backgroundColor: 'transparent'}}
+            from={
+              <Pressable
+                style={({pressed}) => [
+                  pressed && styles.pressed,
+                  pressed && {backgroundColor: '#ccc', borderRadius: 30},
+                ]}>
+                <Image
+                  style={[
+                    styles.threedots,
+                    {tintColor: activeColor.textPrimary},
+                  ]}
+                  source={ThreeDots}
+                />
+              </Pressable>
+            }>
+            <PopoverMenu />
+          </Popover> */}
+
+          {/* {showModal && <PopoverMenu style={styles.modalPosition} />} */}
         </View>
       </View>
     </Pressable>
@@ -68,12 +167,13 @@ export default function NewsOverviewItem({
 const styles = StyleSheet.create({
   item: {
     marginHorizontal: '3%',
-    marginBottom: 20,
+    // marginBottom: 20,
     flexDirection: 'row',
     gap: 15,
-    paddingBottom: 30,
+    paddingVertical: 20,
     borderBottomColor: '#909090',
     borderBottomWidth: 1,
+    zIndex: 1,
   },
   pressed: {
     opacity: 0.6,
@@ -114,9 +214,40 @@ const styles = StyleSheet.create({
   greyText: {
     color: '#999',
   },
+
+  threedotsContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+  },
   threedots: {
     width: 25,
     height: 25,
-    marginRight: 15,
+    // marginRight: 15,
+    // position: 'relative',
+  },
+
+  modal: {
+    width: 140,
+    height: 80,
+    borderRadius: 10,
+
+    // Box shadow Android
+    elevation: 4,
+    // Box shadow IOS
+    shadowColor: 'black',
+    shadowOffset: {width: 2, height: 2},
+    shadowRadius: 6,
+    shadowOpacity: 0.25,
+    backgroundColor: '#fff',
+  },
+
+  modalPosition: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    zIndex: 100,
   },
 });

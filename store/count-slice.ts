@@ -10,7 +10,7 @@ const initCountState: CountState = {
 };
 
 const countSlice = createSlice({
-  name: 'Authentication',
+  name: 'Count',
   initialState: initCountState,
   reducers: {
     increment(state) {

@@ -1,11 +1,12 @@
+import {useRef} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ViewStyle,
   Image,
   useColorScheme,
   SafeAreaView,
+  Pressable,
 } from 'react-native';
 import Logo from '../UI/Logo';
 import NotificatonIcon from '../../assets/notification.png';
@@ -15,9 +16,25 @@ import Feather from 'react-native-vector-icons/Feather';
 import {Colors} from '../../constants/Color';
 
 // IntrinsicAttributes & HomeHeaderProps;
+interface HeaderProps {
+  title: string;
+  onShowNewsSource: (x: number, y: number) => void;
+}
 
-export default function HomeHeader(): React.JSX.Element {
+export default function HomeHeader({
+  title,
+  onShowNewsSource,
+}: HeaderProps): React.JSX.Element {
+  // const [showPopover, setShowPopover] = useState<boolean>(false);
+  // const [title, setTitle] = useState<string>(NewsSource.VnExpress);
+  const iconRef = useRef<Image>(null);
   const theme = useColorScheme() ?? 'light';
+
+  const getPositionHandler = function () {
+    iconRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      onShowNewsSource(pageX, pageY);
+    });
+  };
 
   const activeColor = Colors[theme];
 
@@ -45,16 +62,57 @@ export default function HomeHeader(): React.JSX.Element {
               fontSize: 18,
               fontWeight: 'bold',
             }}>
-            News 24
+            {title}
           </Text>
         </View>
 
-        <View style={styles.notificationContainer}>
+        <Pressable
+          style={styles.notificationContainer}
+          onPress={getPositionHandler}>
           <Image
-            style={[styles.notification, {tintColor: activeColor.textPrimary}]}
+            ref={iconRef}
+            style={[
+              styles.notification,
+              //  {tintColor: activeColor.textPrimary}
+            ]}
             source={NotificatonIcon}
           />
-        </View>
+        </Pressable>
+
+        {/* <Popover
+          isVisible={showPopover}
+          backgroundStyle={{backgroundColor: 'transparent'}}
+          onRequestClose={() => setShowPopover(false)}
+          arrowSize={{width: 0, height: 0}}
+          popoverStyle={{
+            width: 120,
+            height: 80,
+            marginRight: 20,
+            borderRadius: 10,
+            // Box shadow Android
+            elevation: 4,
+            // Box shadow IOS
+            shadowColor: 'black',
+            shadowOffset: {width: 2, height: 2},
+            shadowRadius: 6,
+            shadowOpacity: 0.25,
+            backgroundColor: '#fff',
+          }}
+          from={
+            <Pressable
+              style={styles.notificationContainer}
+              onPress={() => setShowPopover(true)}>
+              <Image
+                style={[
+                  styles.notification,
+                  //  {tintColor: activeColor.textPrimary}
+                ]}
+                source={NotificatonIcon}
+              />
+            </Pressable>
+          }>
+        
+        </Popover> */}
       </View>
     </SafeAreaView>
   );
@@ -77,9 +135,15 @@ const styles = StyleSheet.create({
     width: 20,
     height: 25,
     marginRight: 20,
+
+    position: 'relative',
   },
   notification: {
     height: '100%',
     width: '100%',
+  },
+
+  pressed: {
+    opacity: 0.8,
   },
 });

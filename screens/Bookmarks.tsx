@@ -1,22 +1,36 @@
-import {Button, Text, View} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import OutsidePressDetector from '../components/UI/OutsidePressDetector';
 
-import {useSelector, useDispatch} from 'react-redux';
-import {countActions} from '../store/count-slice';
-import {RootState} from '../store';
-
-export default function BookmarksScreen(): React.JSX.Element {
-  const count = useSelector<RootState>(state => state.count.count) as number;
-  const dispatch = useDispatch();
-
-  const changeOtherHandler = function () {
-    dispatch(countActions.changeOther());
+const ParentComponent: React.FC = () => {
+  const handlePressOutside = () => {
+    console.log('Pressed outside the component');
+    // Add your logic here for handling the press outside event
   };
 
   return (
-    <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Bookmarks Page</Text>
-      <Text>{count}</Text>
-      <Button title="Change Other" onPress={changeOtherHandler} />
+    <View style={styles.container}>
+      <OutsidePressDetector onPressOutside={handlePressOutside}>
+        <View style={styles.innerContainer}>
+          <Text>Press outside this area to trigger the event</Text>
+        </View>
+      </OutsidePressDetector>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 200,
+    backgroundColor: 'transparent',
+  },
+  innerContainer: {
+    backgroundColor: 'lightblue',
+    padding: 20,
+  },
+});
+
+export default ParentComponent;
