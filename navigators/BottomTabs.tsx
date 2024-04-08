@@ -59,7 +59,7 @@ export default function BottomTabsNavigator() {
         component={HomeScreen}
         options={{
           headerShown: false,
-          header: () => <HomeHeader title="VnExpress" />,
+          // header: () => <HomeHeader title="VnExpress" />,
           tabBarIcon: ({focused}) => {
             if (!focused) {
               return <BottomTabIcon source={HomeIcon} />;

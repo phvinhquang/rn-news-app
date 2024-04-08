@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef} from 'react';
+import {useRef} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,35 +6,24 @@ import {
   View,
   useColorScheme,
   Pressable,
-  GestureResponderEvent,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {popoverActions} from '../../../store/popover-slice';
 import ThreeDots from '../../../assets/menu.png';
-import Popover, {PopoverPlacement} from 'react-native-popover-view';
 import {Colors} from '../../../constants/Color';
-import {Overview} from '../../../screens/Home';
-import PopoverMenu from '../../UI/PopoverMenu';
+import {Overview, PressedItem} from '../../../screens/Home';
 import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {NativeStackParamsList} from '../../../navigators/Stack';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-
-import {RootState} from '../../../store';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {NativeStackParamsList} from '../../../navigators/Stack';
-
-// import BottomTabIcon from '../../UI/BottomTabIcon';
-// import ShareIcon from '../../../assets/share.png';
-// import BookmarkIcon from '../../../assets/bookmark.png';
+import {Bookmark} from '../../../screens/Bookmarks';
 
 interface NewsOverviewItemProp {
-  news: Overview;
-  popoverIsShown: boolean;
-  newsSourcePopoverIsShown: boolean;
-  onHidePopover: () => void;
-  onGetPosition: (pageX: number, pageY: number) => void;
+  news: Overview | Bookmark;
+  index: number;
+  onGetPosition: (pageX: number, pageY: number, item: PressedItem) => void;
+  onBookmark?: () => void;
 }
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
@@ -42,45 +31,21 @@ type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
 export default function NewsOverviewItem({
   news,
   onGetPosition,
-  popoverIsShown,
-  newsSourcePopoverIsShown,
-  onHidePopover,
+  index,
 }: NewsOverviewItemProp): React.JSX.Element {
-  // const [showModal, setShowModal] = useState<boolean>(false);
-  // const popoverIsShown = useSelector<RootState>(state => state.popover.shown);
   const navigation = useNavigation<NavigationProps>();
-  // const dispatch = useDispatch();
   const openMenuRef = useRef<Image>(null);
-
-  // Show modal function
-  // const showModalHandler = function () {
-  //   setShowModal(true);
-  //   dispatch(popoverActions.showPopover());
-  // };
 
   const getPositionHandler = function () {
     openMenuRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      // console.log(x, y, width, height, pageX, pageY);
-      // console.log(typeof pageX, typeof pageY);
-
-      onGetPosition(pageX, pageY);
+      onGetPosition(pageX, pageY, {...(news as Overview), index});
     });
   };
 
   // Go to Detail Screen function
   const goToDetailHanlder = function () {
-    if (popoverIsShown || newsSourcePopoverIsShown) {
-      onHidePopover();
-      return;
-    }
-
     navigation.push('Detail', {link: news.link});
   };
-
-  /////////////////
-  // useEffect(() => {
-  //   if (!popoverIsShown) setShowModal(false);
-  // }, [popoverIsShown]);
 
   TimeAgo.addLocale(en);
   const timeAgo = new TimeAgo('en-US');
@@ -129,33 +94,6 @@ export default function NewsOverviewItem({
               source={ThreeDots}
             />
           </Pressable>
-
-          {/* <Popover
-            verticalOffset={-10}
-            placement={PopoverPlacement.BOTTOM}
-            popoverStyle={styles.modal}
-            arrowSize={{
-              width: 0,
-              height: 0,
-            }}
-            backgroundStyle={{backgroundColor: 'transparent'}}
-            from={
-              <Pressable
-                style={({pressed}) => [
-                  pressed && styles.pressed,
-                  pressed && {backgroundColor: '#ccc', borderRadius: 30},
-                ]}>
-                <Image
-                  style={[
-                    styles.threedots,
-                    {tintColor: activeColor.textPrimary},
-                  ]}
-                  source={ThreeDots}
-                />
-              </Pressable>
-            }>
-            <PopoverMenu />
-          </Popover> */}
 
           {/* {showModal && <PopoverMenu style={styles.modalPosition} />} */}
         </View>

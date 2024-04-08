@@ -12,10 +12,12 @@ import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverview
 import {Colors} from '../constants/Color';
 import {useCallback, useEffect, useState} from 'react';
 import {fetchAndParseRss} from '../utils/rssHandler';
-import {Catergory} from '../constants/Categories';
+import {CATEGORIES, Catergory} from '../constants/Categories';
+import {Bookmarks} from '../utils/database';
 
 import HomeHeader from '../components/HomeScreen/Header';
 import PopoverMenu from '../components/UI/PopoverMenu';
+import ModalOverlay from '../components/UI/ModalOverlay';
 
 export interface Overview {
   title: string;
@@ -24,6 +26,11 @@ export interface Overview {
   link: string;
   pubDate: string;
   thumbnail: string;
+  bookmarked: boolean;
+}
+
+export interface PressedItem extends Overview {
+  index: number;
 }
 
 export enum NewsSource {
@@ -34,6 +41,9 @@ export enum NewsSource {
 export default function HomeScreen(): React.JSX.Element {
   const [title, setTitle] = useState<string>(NewsSource.VnExpress);
   const [newsSource, setNewsSource] = useState<string>(NewsSource.VnExpress);
+  const [chosenCategory, setChosenCategory] = useState<Catergory>(
+    CATEGORIES[0],
+  );
   const [overviews, setOverviews] = useState<Overview[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSourcePopover, setShowSourcePopover] = useState<boolean>(false);
@@ -43,6 +53,9 @@ export default function HomeScreen(): React.JSX.Element {
     x: 0,
     y: 0,
   });
+  const [pressedItemData, setPressedItemData] = useState<
+    PressedItem | undefined
+  >(undefined);
 
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
@@ -50,6 +63,7 @@ export default function HomeScreen(): React.JSX.Element {
   // Change category handler
   const categoryChangeHandler = async function (chosenCategory: Catergory) {
     setIsLoading(true);
+    setChosenCategory(chosenCategory);
 
     try {
       const res = await fetchAndParseRss(
@@ -72,16 +86,14 @@ export default function HomeScreen(): React.JSX.Element {
     async function () {
       setIsLoading(true);
 
-      // console.log('from fetch data', newsSource);
-
       try {
         const res = await fetchAndParseRss(
           newsSource,
-          'tin-noi-bat.rss',
-          'For You',
+          newsSource === NewsSource.VnExpress
+            ? chosenCategory.vneUrl
+            : chosenCategory.tuoiTreUrl,
+          chosenCategory.name,
         );
-
-        // console.log('response', res);
 
         setOverviews(res);
         setIsLoading(false);
@@ -89,14 +101,55 @@ export default function HomeScreen(): React.JSX.Element {
         Alert.alert('Something went wrong', 'Could not fetch news');
       }
     },
-    [newsSource],
+    [newsSource, chosenCategory],
   );
 
   // Show share/bookmark popover handler
-  const showPopoverHandler = function (pageX: number, pageY: number) {
+  const showPopoverHandler = function (
+    pageX: number,
+    pageY: number,
+    pressedItem: PressedItem,
+  ) {
+    setPressedItemData(pressedItem);
     setPopoverCoord({x: pageX, y: pageY});
     setShowPopover(true);
   };
+
+  // Save item to bookmark database
+  // const bookmarkHandler = function () {
+  //   // Check if item is already bookmarked
+  //   if (pressedItemData?.bookmarked) {
+  //     Alert.alert('Already bookmarked', 'You can see this in bookmark page');
+  //     // Un-bookmark later
+  //     return;
+  //   }
+
+  //   // Save item to bookmark database
+  //   Bookmarks.insert(
+  //     {
+  //       title: pressedItemData?.title,
+  //       link: pressedItemData?.link,
+  //       author: pressedItemData?.author,
+  //       category: pressedItemData?.category,
+  //       pubDate: pressedItemData?.pubDate,
+  //       thumbnail: pressedItemData?.thumbnail,
+  //       userEmail: 'quang@gmail.com',
+  //     },
+  //     true,
+  //   );
+
+  //   // Bookmarks.removeAllRecords();
+  //   // Change bookmark status of the item then setOverviews
+  //   setOverviews(prev => {
+  //     const updatedState = [...prev];
+  //     updatedState[pressedItemData?.index as number].bookmarked = true;
+
+  //     return updatedState;
+  //   });
+
+  //   // Close popover menu
+  //   setShowPopover(false);
+  // };
 
   // Show news source popover
   const showNewsSourcePopoverHandler = function (pageX: number, pageY: number) {
@@ -106,6 +159,7 @@ export default function HomeScreen(): React.JSX.Element {
 
   // Hide popover
   const hidePopoverHandler = function () {
+    setPressedItemData(undefined);
     setShowPopover(false);
     setShowSourcePopover(false);
   };
@@ -115,6 +169,7 @@ export default function HomeScreen(): React.JSX.Element {
     e: GestureResponderEvent,
     source: string,
   ) {
+    hidePopoverHandler();
     setNewsSource(source);
     setTitle(source);
   };
@@ -137,9 +192,6 @@ export default function HomeScreen(): React.JSX.Element {
           {/* Categories */}
           <Categories
             onChangeCategory={categoryChangeHandler}
-            popoverIsShown={showPopover}
-            newsSourcePopoverIsShown={showSourcePopover}
-            onHidePopover={hidePopoverHandler}
             newsSource={newsSource}
           />
           {/* Articles list */}
@@ -147,52 +199,55 @@ export default function HomeScreen(): React.JSX.Element {
             data={overviews}
             onRefresh={fetchData}
             onShowPopover={showPopoverHandler}
+            // onBookmark={bookmarkHandler}
             isLoading={isLoading}
-            popoverIsShown={showPopover}
-            newsSourcePopoverIsShown={showSourcePopover}
-            onHidePopover={hidePopoverHandler}
           />
 
           {/* Share and Boomark Popover */}
           {showPopover && (
-            <PopoverMenu
-              onHidePopover={hidePopoverHandler}
-              style={{
-                position: 'absolute',
-                top: popoverCoord.y,
-                left: popoverCoord.x - 110,
-              }}
-            />
+            <ModalOverlay onPress={hidePopoverHandler}>
+              <PopoverMenu
+                onBookmark={() => {}}
+                onHidePopover={hidePopoverHandler}
+                style={{
+                  position: 'absolute',
+                  top: popoverCoord.y,
+                  left: popoverCoord.x - 110,
+                }}
+              />
+            </ModalOverlay>
           )}
 
           {/* Change news source popover */}
           {showSourcePopover && (
-            <View
-              style={[
-                styles.sourcePopover,
-                {
-                  position: 'absolute',
-                  top: newsSourcePopoverCoord.y + 20,
-                  left: newsSourcePopoverCoord.x - 100,
-                },
-              ]}>
-              <Pressable
-                style={styles.sourceOptions}
-                onPress={e => {
-                  changeNewsSourceHandler(e, NewsSource.VnExpress);
-                  setShowSourcePopover(false);
-                }}>
-                <Text style={styles.menuText}>VnExpress</Text>
-              </Pressable>
-              <Pressable
-                style={styles.sourceOptions}
-                onPress={e => {
-                  changeNewsSourceHandler(e, NewsSource.TuoiTre);
-                  setShowSourcePopover(false);
-                }}>
-                <Text style={styles.menuText}>Tuoi Tre</Text>
-              </Pressable>
-            </View>
+            <ModalOverlay onPress={hidePopoverHandler}>
+              <View
+                style={[
+                  styles.sourcePopover,
+                  {
+                    position: 'absolute',
+                    top: newsSourcePopoverCoord.y + 20,
+                    left: newsSourcePopoverCoord.x - 100,
+                  },
+                ]}>
+                <Pressable
+                  style={styles.sourceOptions}
+                  onPress={e => {
+                    changeNewsSourceHandler(e, NewsSource.VnExpress);
+                    setShowSourcePopover(false);
+                  }}>
+                  <Text style={styles.menuText}>VnExpress</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.sourceOptions}
+                  onPress={e => {
+                    changeNewsSourceHandler(e, NewsSource.TuoiTre);
+                    setShowSourcePopover(false);
+                  }}>
+                  <Text style={styles.menuText}>Tuoi Tre</Text>
+                </Pressable>
+              </View>
+            </ModalOverlay>
           )}
         </View>
       </Pressable>

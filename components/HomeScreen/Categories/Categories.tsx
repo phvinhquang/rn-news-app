@@ -5,29 +5,26 @@ import {CATEGORIES} from '../../../constants/Categories';
 import type {Catergory} from '../../../constants/Categories';
 
 interface CategoriesProps {
-  popoverIsShown: boolean;
-  newsSourcePopoverIsShown: boolean;
-  newsSource: string;
+  newsSource?: string;
+  bookmarksScreen?: boolean;
   onChangeCategory: (category: Catergory) => void;
-  onHidePopover: () => void;
 }
 
 export default function Categories({
   onChangeCategory,
-  onHidePopover,
-  popoverIsShown,
-  newsSourcePopoverIsShown,
+
   newsSource,
+  bookmarksScreen,
 }: CategoriesProps): React.JSX.Element {
-  const [chosenCategoy, setChosenCategory] = useState<Catergory>(CATEGORIES[0]);
+  // Change categories list if in bookmark screen
+  let data = CATEGORIES;
+  if (bookmarksScreen) {
+    data = CATEGORIES.slice(2);
+  }
+
+  const [chosenCategoy, setChosenCategory] = useState<Catergory>(data[0]);
 
   function categoryPressedHandler(category: Catergory): void {
-    // Close popover if it's shown
-    if (popoverIsShown || newsSourcePopoverIsShown) {
-      onHidePopover();
-      return;
-    }
-
     // Otherwise choose category
     setChosenCategory(category);
     onChangeCategory(category);
@@ -35,14 +32,14 @@ export default function Categories({
 
   // Back to For You if news source change
   useEffect(() => {
-    setChosenCategory(CATEGORIES[0]);
-    onChangeCategory(CATEGORIES[0]);
+    setChosenCategory(data[0]);
+    onChangeCategory(data[0]);
   }, [newsSource]);
 
   return (
     <View style={styles.listContainer}>
       <FlatList
-        data={CATEGORIES}
+        data={data}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={item => item.name}

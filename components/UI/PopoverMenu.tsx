@@ -7,9 +7,14 @@ import BookmarkIcon from '../../assets/bookmark.png';
 interface PopoverProps {
   style?: ViewStyle;
   onHidePopover: () => void;
+  onBookmark: () => void;
 }
 
-export default function PopoverMenu({style, onHidePopover}: PopoverProps) {
+export default function PopoverMenu({
+  style,
+  onHidePopover,
+  onBookmark,
+}: PopoverProps) {
   return (
     <View style={[styles.modal, style]}>
       <View style={styles.modalContent}>
@@ -24,7 +29,7 @@ export default function PopoverMenu({style, onHidePopover}: PopoverProps) {
         </Pressable>
         <View style={styles.horizontalLine}></View>
         <Pressable
-          onPress={onHidePopover}
+          onPress={onBookmark}
           style={({pressed}) => [
             styles.modalInnerFlexbox,
             pressed && styles.pressed,

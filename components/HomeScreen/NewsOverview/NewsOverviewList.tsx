@@ -7,17 +7,15 @@ import {
 } from 'react-native';
 import {useState, useCallback} from 'react';
 import NewsOverviewItem from './NewsOverviewItem';
-import PopoverMenu from '../../UI/PopoverMenu';
-import type {Overview} from '../../../screens/Home';
+import type {Overview, PressedItem} from '../../../screens/Home';
+import {Bookmark} from '../../../screens/Bookmarks';
 
 interface OverviewListProps {
-  data: Overview[];
+  data: (Overview | Bookmark)[];
   isLoading: boolean;
-  popoverIsShown: boolean;
-  newsSourcePopoverIsShown: boolean;
   onRefresh: () => void;
-  onShowPopover: (x: number, y: number) => void;
-  onHidePopover: () => void;
+  onShowPopover: (x: number, y: number, item: PressedItem) => void;
+  onBookmark?: () => void;
 }
 
 // const DUMMY_DATA = [
@@ -91,14 +89,13 @@ export default function NewsOverviewList({
   isLoading,
   onRefresh,
   onShowPopover,
-  popoverIsShown,
-  newsSourcePopoverIsShown,
-  onHidePopover,
+
+  onBookmark,
 }: OverviewListProps): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
   // Pull to refresh handler
-  const refreshHandler = useCallback(async function () {
+  const refreshHandler = async function () {
     setRefreshing(true);
     try {
       await onRefresh();
@@ -106,11 +103,6 @@ export default function NewsOverviewList({
     } finally {
       setRefreshing(false);
     }
-  }, []);
-
-  // Show pop over handler
-  const showPopoverHandler = function (pageX: number, pageY: number) {
-    onShowPopover(pageX, pageY);
   };
 
   return (
@@ -123,16 +115,14 @@ export default function NewsOverviewList({
       {!isLoading && (
         <>
           <FlatList
-            onScrollBeginDrag={onHidePopover}
             data={data}
-            keyExtractor={item => item.title}
+            keyExtractor={item => item.link}
             renderItem={itemData => (
               <NewsOverviewItem
-                popoverIsShown={popoverIsShown}
-                newsSourcePopoverIsShown={newsSourcePopoverIsShown}
-                onHidePopover={onHidePopover}
                 news={itemData.item}
-                onGetPosition={showPopoverHandler}
+                index={itemData.index}
+                onGetPosition={onShowPopover}
+                onBookmark={onBookmark}
               />
             )}
             refreshControl={

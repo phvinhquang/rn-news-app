@@ -38,7 +38,7 @@ export default function DetailHeader({url}: HeaderProps) {
 
   return (
     <View style={styles.headerContainer}>
-      <Pressable style={{marginLeft: 15}} onPress={goBackHandler}>
+      <Pressable style={{marginLeft: 8}} onPress={goBackHandler}>
         <BottomTabIcon source={BackBtn} style={styles.icon} />
       </Pressable>
 

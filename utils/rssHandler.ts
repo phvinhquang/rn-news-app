@@ -1,5 +1,6 @@
 import {vnexpressRssUrl, tuoiTreRssUrl} from '../constants/Rss_Url';
 import {NewsSource} from '../screens/Home';
+import {checkBookmark} from './checkBookmarkStatus';
 
 export const fetchAndParseRss = async (
   source: string,
@@ -8,8 +9,6 @@ export const fetchAndParseRss = async (
 ) => {
   const domain =
     source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
-
-  // let domain = vnexpressRssUrl;
 
   try {
     const response = await fetch(domain + enpoint);
@@ -22,6 +21,8 @@ export const fetchAndParseRss = async (
     const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
 
     let data;
+
+    // Parse data from VnExpress
     if (domain === vnexpressRssUrl) {
       data = items.map(item => {
         // Extract title, description, image, date and actually link to article
@@ -44,6 +45,12 @@ export const fetchAndParseRss = async (
           imageUrl = description[1];
         }
 
+        // Check bookmark status
+        // const isBookmarked = checkBookmark(link);
+        // if (isBookmarked) {
+        //   console.log(isBookmarked);
+        // }
+
         return {
           title: title || 'none',
           link: link,
@@ -51,6 +58,7 @@ export const fetchAndParseRss = async (
           category: category,
           pubDate: pubDate || 'none',
           thumbnail: imageUrl?.trim() || 'none',
+          bookmarked: false,
         };
       });
     }
@@ -86,9 +94,10 @@ export const fetchAndParseRss = async (
           title: title || 'none',
           link: link,
           author: 'Tuoi Tre',
-          category: 'For you',
+          category: category,
           pubDate: pubDate || 'none',
           thumbnail: imageUrl?.trim() || 'none',
+          bookmarked: false,
         };
       });
     }
