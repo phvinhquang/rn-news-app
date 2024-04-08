@@ -1,1 +1,2 @@
-export const vnexpressRssUrl = 'https://vnexpress.net/rss/tin-moi-nhat.rss';
+export const vnexpressRssUrl = 'https://vnexpress.net/rss/';
+export const tuoiTreRssUrl = 'https://tuoitre.vn/rss/';

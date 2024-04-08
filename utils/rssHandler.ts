@@ -1,69 +1,106 @@
-import {vnexpressRssUrl} from '../constants/Rss_Url';
+import {vnexpressRssUrl, tuoiTreRssUrl} from '../constants/Rss_Url';
+import {NewsSource} from '../screens/Home';
+import {checkBookmark} from './checkBookmarkStatus';
 
-export const fetchAndParseRss = async () => {
+export const fetchAndParseRss = async (
+  source: string,
+  enpoint: string,
+  category: string,
+) => {
+  const domain =
+    source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
+
   try {
-    const response = await fetch(vnexpressRssUrl);
+    const response = await fetch(domain + enpoint);
     const xmlText = await response.text();
 
     const items = xmlText.split('<item>');
     // Delete first item
     items.shift();
-    // console.log(items);
 
-    // Extract title, description, image, date and actually link to article
-    // const title = items[1].match(/<title>(.*?)<\/title>/)![1];
-    // console.log(title);
+    const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
 
-    // Not needed now :((
-    // const descriptionData = items[2].match(
-    //   /<description>(.*?)<\/description>/,
-    // )![1];
+    let data;
 
-    // const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
-    // const urlRegex = /src="(.*?)"/;
-    // const description = descriptionData.match(urlRegex);
-    // if (description) {
-    //   console.log(description[1]);
-    // }
+    // Parse data from VnExpress
+    if (domain === vnexpressRssUrl) {
+      data = items.map(item => {
+        // Extract title, description, image, date and actually link to article
+        const title = item.match(/<title>(.*?)<\/title>/)![1];
 
-    // const pubDate = items[1].match(/<pubDate>(.*?)<\/pubDate>/)![1];
-    // console.log(pubDate);
+        const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)![1];
 
-    // const image = items[1].match(/<enclosure (.*?)\/>/);
-    // const urlRegex = /url="(.*?)"/;
-    // const imageUrl = image![1].match(urlRegex)![1];
+        const link = item.match(/<link>(.*?)<\/link>/)![1];
 
-    // console.log(imageUrl);
+        const descriptionData = item.match(
+          /<description>(.*?)<\/description>/,
+        )![1];
 
-    const data = items.map(item => {
-      // Extract title, description, image, date and actually link to article
-      const title = item.match(/<title>(.*?)<\/title>/)![1];
+        // const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
+        const urlRegex = /src="(.*?)"/;
+        const description = descriptionData.match(urlRegex);
+        let imageUrl;
 
-      const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)![1];
+        if (description) {
+          imageUrl = description[1];
+        }
 
-      const link = items[1].match(/<link>(.*?)<\/link>/)![1];
+        // Check bookmark status
+        // const isBookmarked = checkBookmark(link);
+        // if (isBookmarked) {
+        //   console.log(isBookmarked);
+        // }
 
-      const descriptionData = item.match(
-        /<description>(.*?)<\/description>/,
-      )![1];
+        return {
+          title: title || 'none',
+          link: link,
+          author: 'VnExpress',
+          category: category,
+          pubDate: pubDate || 'none',
+          thumbnail: imageUrl?.trim() || 'none',
+          bookmarked: false,
+        };
+      });
+    }
+    // Parse data for Tuoi Tre
+    else {
+      data = items.map(item => {
+        // Extract title, description, image, date and actually link to article
+        const titleData = item.match(/<title>(.*?)<\/title>/)![1];
+        const title = titleData.match(cdataRegex)![1];
 
-      // const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
-      const urlRegex = /src="(.*?)"/;
-      const description = descriptionData.match(urlRegex);
-      let imageUrl;
+        const pubDateData = item.match(/<pubDate>(.*?)<\/pubDate>/)![1];
+        const pubDate = pubDateData
+          .match(cdataRegex)![1]
+          .replace('GMT+7', '+0700');
+        // console.log(pubDate);
 
-      if (description) {
-        imageUrl = description[1];
-      }
+        const linkData = item.match(/<link>(.*?)<\/link>/)![1];
+        const link = linkData.match(cdataRegex)![1];
 
-      return {
-        title: title || 'none',
-        link: link,
-        category: 'For you',
-        pubDate: pubDate || 'none',
-        thumbnail: imageUrl?.trim() || 'none',
-      };
-    });
+        const descriptionData = item.match(
+          /<description>(.*?)<\/description>/,
+        )![1];
+        // const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
+        const urlRegex = /src="(.*?)"/;
+        const description = descriptionData.match(urlRegex);
+        let imageUrl;
+
+        if (description) {
+          imageUrl = description[1];
+        }
+
+        return {
+          title: title || 'none',
+          link: link,
+          author: 'Tuoi Tre',
+          category: category,
+          pubDate: pubDate || 'none',
+          thumbnail: imageUrl?.trim() || 'none',
+          bookmarked: false,
+        };
+      });
+    }
 
     return data;
   } catch (error: any) {

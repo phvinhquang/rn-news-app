@@ -1,3 +1,13 @@
+screens/Detail.tsx
+screens/Bookmarks.tsx
+utils/database
+utils/checkBookmarkStatus.ts
+utils/rssHandler.ts
+react-native.config.js
+
+
+
+
 # OSX
 #
 .DS_Store

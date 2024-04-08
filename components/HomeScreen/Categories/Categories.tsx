@@ -1,35 +1,53 @@
-import {View, ScrollView, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet} from 'react-native';
 import CategoryItem from './CategoryItem';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {CATEGORIES} from '../../../constants/Categories';
+import type {Catergory} from '../../../constants/Categories';
 
-const CATEGORIES = [
-  'For You',
-  'Top',
-  'World',
-  'Politics',
-  'Entertainment',
-  'Science',
-];
+interface CategoriesProps {
+  newsSource?: string;
+  bookmarksScreen?: boolean;
+  onChangeCategory: (category: Catergory) => void;
+}
 
-export default function Categories(): React.JSX.Element {
-  const [chosenCategoy, setChosenCategory] = useState<string>('For You');
+export default function Categories({
+  onChangeCategory,
 
-  function categoryPressedHandler(category: string): void {
-    setChosenCategory(category);
+  newsSource,
+  bookmarksScreen,
+}: CategoriesProps): React.JSX.Element {
+  // Change categories list if in bookmark screen
+  let data = CATEGORIES;
+  if (bookmarksScreen) {
+    data = CATEGORIES.slice(2);
   }
 
+  const [chosenCategoy, setChosenCategory] = useState<Catergory>(data[0]);
+
+  function categoryPressedHandler(category: Catergory): void {
+    // Otherwise choose category
+    setChosenCategory(category);
+    onChangeCategory(category);
+  }
+
+  // Back to For You if news source change
+  useEffect(() => {
+    setChosenCategory(data[0]);
+    onChangeCategory(data[0]);
+  }, [newsSource]);
+
   return (
-    <View style={styles.container}>
+    <View style={styles.listContainer}>
       <FlatList
-        data={CATEGORIES}
+        data={data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={item => item}
+        keyExtractor={item => item.name}
         renderItem={itemData => (
           <CategoryItem
-            onCatPress={categoryPressedHandler}
-            title={itemData.item}
-            highlight={chosenCategoy === itemData.item}
+            onCatPress={() => categoryPressedHandler(itemData.item)}
+            data={itemData.item}
+            highlight={chosenCategoy.name === itemData.item.name}
           />
         )}
       />
@@ -38,7 +56,7 @@ export default function Categories(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  listContainer: {
     paddingVertical: 20,
   },
 });

@@ -11,11 +11,13 @@ import {View, ActivityIndicator} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {authActions} from '../store/auth-slice';
 import {RootState} from '../store';
+import DetailScreen from '../screens/Detail';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
   SignUp: undefined;
   Main: undefined;
+  Detail: {link: string};
 };
 
 const Stack = createNativeStackNavigator<NativeStackParamsList>();
@@ -55,11 +57,18 @@ export default function StackNavigator() {
   return (
     <Stack.Navigator>
       {isSignedIn ? (
-        <Stack.Screen
-          name="Main"
-          component={BottomTabsNavigator}
-          options={{headerShown: false}}
-        />
+        <>
+          <Stack.Screen
+            name="Main"
+            component={BottomTabsNavigator}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Detail"
+            component={DetailScreen}
+            options={{headerShown: false}}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen
