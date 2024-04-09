@@ -23,6 +23,8 @@ import {Bookmarks} from '../../../utils/database';
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store';
 
 interface NewsOverviewItemProp {
   news: Overview | BookmarkInterface;
@@ -41,6 +43,7 @@ export default function NewsOverviewItem({
 }: NewsOverviewItemProp): React.JSX.Element {
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
+  const userEmail = useSelector<RootState>(state => state.authentication.email);
 
   const navigation = useNavigation<NavigationProps>();
   const openMenuRef = useRef<Image>(null);
@@ -84,7 +87,7 @@ export default function NewsOverviewItem({
           category: news?.category,
           pubDate: news?.pubDate,
           thumbnail: news?.thumbnail,
-          userEmail: 'quang@gmail.com',
+          userEmail: userEmail,
         },
         true,
       );

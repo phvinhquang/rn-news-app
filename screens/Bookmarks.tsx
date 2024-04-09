@@ -5,6 +5,8 @@ import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverview
 import {Bookmarks} from '../utils/database';
 import {useState} from 'react';
 import {CATEGORIES, Catergory} from '../constants/Categories';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store';
 
 export interface BookmarkInterface {
   id: string;
@@ -18,16 +20,16 @@ export interface BookmarkInterface {
 }
 
 export default function BookmarksScreen(): React.JSX.Element {
-  // Filter data based on current user
-
   const [data, setData] = useState<BookmarkInterface[]>([]);
   const [chosenCategory, setChosenCategory] = useState<Catergory>(
     CATEGORIES[0],
   );
+  const userEmail = useSelector<RootState>(state => state.authentication.email);
 
   const getData = async function () {
     const data = await Bookmarks.data().filter(
-      (item: BookmarkInterface) => item.category === chosenCategory.name,
+      (item: BookmarkInterface) =>
+        item.category === chosenCategory.name && item.userEmail === userEmail,
     );
 
     setData(data);
@@ -44,6 +46,7 @@ export default function BookmarksScreen(): React.JSX.Element {
     // Bookmarks.onLoaded(() => {
     //   setData(data);
     // });
+
     Bookmarks.onChange(() => {
       getData();
     });
@@ -55,7 +58,8 @@ export default function BookmarksScreen(): React.JSX.Element {
 
     // Filter data in database and setData again
     const result = Bookmarks.data().filter(
-      (item: BookmarkInterface) => item.category === category.name,
+      (item: BookmarkInterface) =>
+        item.category === category.name && item.userEmail === userEmail,
     );
 
     setData(result);
@@ -70,7 +74,8 @@ export default function BookmarksScreen(): React.JSX.Element {
     Bookmarks.onChange(() => {
       setData(prev =>
         prev.filter(
-          (item: BookmarkInterface) => item.link !== pressedItemData?.link,
+          (item: BookmarkInterface) =>
+            item.link !== pressedItemData?.link && item.userEmail === userEmail,
         ),
       );
     });

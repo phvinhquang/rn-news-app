@@ -41,7 +41,7 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
         // Save token if there is one
         if (result?.token) {
           // Use redux
-          dispatch(authActions.login({token: result.token}));
+          dispatch(authActions.login({token: result.token, email: email}));
         }
       } else {
         // Send HTTP request to signup

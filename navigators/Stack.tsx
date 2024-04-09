@@ -39,7 +39,7 @@ export default function StackNavigator() {
     auth.onAuthStateChanged(data => {
       if (data) {
         data.getIdToken().then(token => {
-          dispatch(authActions.login({token: token}));
+          dispatch(authActions.login({token: token, email: data.email}));
         });
       }
       setIsLoading(false);
