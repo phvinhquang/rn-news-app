@@ -24,6 +24,23 @@ const BookmarkSchema = {
   },
 };
 
+const SeenSchema = {
+  name: 'Seens',
+  props: {
+    title: 'string',
+    link: 'string',
+    author: 'string',
+    category: 'string',
+    pubDate: 'string',
+    thumbnail: 'string',
+    userEmail: 'string',
+  },
+};
+
 export const BookmarkDB = new Vasern({
   schemas: [BookmarkSchema],
+});
+
+export const SeenDB = new Vasern({
+  schemas: [SeenSchema],
 });

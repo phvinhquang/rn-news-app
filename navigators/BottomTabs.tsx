@@ -12,17 +12,16 @@ import BookmarksIcon from '../assets/bottom-tab/bookmark_unselected.png';
 import SettingIconActive from '../assets/bottom-tab/settings.png';
 import SettingIcon from '../assets/bottom-tab/settings_unselected.png';
 import BottomTabIcon from '../components/UI/BottomTabIcon';
-import HomeHeader from '../components/HomeScreen/Header';
 
 // Import Components
 import HomeScreen from '../screens/Home';
-import SearchScreen from '../screens/Search';
 import BookmarksScreen from '../screens/Bookmarks';
 import SettingsScreen from '../screens/Settings';
+import SeenScreen from '../screens/SeenScreen';
 
 export type BottomTabsParamsList = {
   HomeScreen: undefined;
-  SearchScreen: undefined;
+  SeenScreen: undefined;
   BookmarksScreen: undefined;
   SettingsScreen: undefined;
   // Profile: {userId: string};
@@ -70,10 +69,10 @@ export default function BottomTabsNavigator() {
         }}
       />
       <BottomTabs.Screen
-        name="SearchScreen"
-        component={SearchScreen}
+        name="SeenScreen"
+        component={SeenScreen}
         options={{
-          // headerShown: false,
+          headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
               return <BottomTabIcon source={SearchIcon} />;

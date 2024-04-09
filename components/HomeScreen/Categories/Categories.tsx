@@ -1,6 +1,6 @@
 import {View, FlatList, StyleSheet} from 'react-native';
 import CategoryItem from './CategoryItem';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import {CATEGORIES} from '../../../constants/Categories';
 import type {Catergory} from '../../../constants/Categories';
 
@@ -13,9 +13,7 @@ export default function Categories({
   onChangeCategory,
   newsSource,
 }: CategoriesProps): React.JSX.Element {
-  // Change categories list if in bookmark screen
-  // let data = CATEGORIES;
-
+  const flatlistRef = useRef<FlatList>(null);
   const [chosenCategoy, setChosenCategory] = useState<Catergory>(CATEGORIES[0]);
 
   function categoryPressedHandler(category: Catergory): void {
@@ -28,11 +26,13 @@ export default function Categories({
   useEffect(() => {
     setChosenCategory(CATEGORIES[0]);
     onChangeCategory(CATEGORIES[0]);
+    flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
   }, [newsSource]);
 
   return (
     <View style={styles.listContainer}>
       <FlatList
+        ref={flatlistRef}
         data={CATEGORIES}
         horizontal
         showsHorizontalScrollIndicator={false}

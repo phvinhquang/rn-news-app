@@ -1,23 +1,25 @@
 import {Button, Text, View} from 'react-native';
 import {signOutAPI} from '../utils/api';
-import {useNavigation} from '@react-navigation/native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {BottomTabsParamsList} from '../navigators/BottomTabs';
+import {useTranslation} from 'react-i18next';
+// import {useNavigation} from '@react-navigation/native';
+// import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+// import {BottomTabsParamsList} from '../navigators/BottomTabs';
 
 // Redux
 import {useDispatch, useSelector} from 'react-redux';
 import {authActions} from '../store/auth-slice';
-import {useEffect} from 'react';
 import {RootState} from '../store';
 
-type NavigationProps = BottomTabNavigationProp<
-  BottomTabsParamsList,
-  'SettingsScreen'
->;
+// type NavigationProps = BottomTabNavigationProp<
+//   BottomTabsParamsList,
+//   'SettingsScreen'
+// >;
 
 export default function SettingsScreen(): React.JSX.Element {
-  const navigation = useNavigation<NavigationProps>();
   const dispatch = useDispatch();
+  const userEmail = useSelector<RootState>(
+    state => state.authentication.email,
+  ) as string;
 
   const signOutHandler = function () {
     signOutAPI().then(() => {
@@ -25,8 +27,18 @@ export default function SettingsScreen(): React.JSX.Element {
     });
   };
 
+  const {t, i18n} = useTranslation();
+
   return (
     <View style={{paddingTop: '30%'}}>
+      <Text style={{textAlign: 'center', fontSize: 20}}>{userEmail}</Text>
+      <Text>{t('greet')}</Text>
+      <Button
+        title="Change Language"
+        onPress={() => {
+          i18n.changeLanguage('vn');
+        }}
+      />
       <Button title="Sign Out" onPress={signOutHandler} />
     </View>
   );
