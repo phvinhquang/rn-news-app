@@ -6,23 +6,17 @@ import type {Catergory} from '../../../constants/Categories';
 
 interface CategoriesProps {
   newsSource?: string;
-  bookmarksScreen?: boolean;
   onChangeCategory: (category: Catergory) => void;
 }
 
 export default function Categories({
   onChangeCategory,
-
   newsSource,
-  bookmarksScreen,
 }: CategoriesProps): React.JSX.Element {
   // Change categories list if in bookmark screen
-  let data = CATEGORIES;
-  if (bookmarksScreen) {
-    data = CATEGORIES.slice(2);
-  }
+  // let data = CATEGORIES;
 
-  const [chosenCategoy, setChosenCategory] = useState<Catergory>(data[0]);
+  const [chosenCategoy, setChosenCategory] = useState<Catergory>(CATEGORIES[0]);
 
   function categoryPressedHandler(category: Catergory): void {
     // Otherwise choose category
@@ -32,14 +26,14 @@ export default function Categories({
 
   // Back to For You if news source change
   useEffect(() => {
-    setChosenCategory(data[0]);
-    onChangeCategory(data[0]);
+    setChosenCategory(CATEGORIES[0]);
+    onChangeCategory(CATEGORIES[0]);
   }, [newsSource]);
 
   return (
     <View style={styles.listContainer}>
       <FlatList
-        data={data}
+        data={CATEGORIES}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={item => item.name}

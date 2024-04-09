@@ -1,9 +1,10 @@
 screens/Detail.tsx
-screens/Bookmarks.tsx
-utils/database
+components/DetailScreen/DetailHeader.tsx
 utils/checkBookmarkStatus.ts
-utils/rssHandler.ts
 react-native.config.js
+
+
+
 
 
 

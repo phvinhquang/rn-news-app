@@ -1,6 +1,5 @@
 import {vnexpressRssUrl, tuoiTreRssUrl} from '../constants/Rss_Url';
 import {NewsSource} from '../screens/Home';
-import {checkBookmark} from './checkBookmarkStatus';
 
 export const fetchAndParseRss = async (
   source: string,
@@ -44,12 +43,6 @@ export const fetchAndParseRss = async (
         if (description) {
           imageUrl = description[1];
         }
-
-        // Check bookmark status
-        // const isBookmarked = checkBookmark(link);
-        // if (isBookmarked) {
-        //   console.log(isBookmarked);
-        // }
 
         return {
           title: title || 'none',

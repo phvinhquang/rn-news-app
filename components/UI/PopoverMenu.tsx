@@ -3,23 +3,36 @@ import BottomTabIcon from './BottomTabIcon';
 
 import ShareIcon from '../../assets/share.png';
 import BookmarkIcon from '../../assets/bookmark.png';
+import FilledBookmarkIcon from '../../assets/bottom-tab/bookmark.png';
 
 interface PopoverProps {
   style?: ViewStyle;
-  onHidePopover: () => void;
-  onBookmark: () => void;
+  bookmarkScreen?: boolean;
+  onBookmark?: () => void;
+  onRemoveBookmark?: () => void;
+  onShare: () => void;
 }
 
 export default function PopoverMenu({
   style,
-  onHidePopover,
   onBookmark,
+  onRemoveBookmark,
+  onShare,
+  bookmarkScreen,
 }: PopoverProps) {
+  const bookmarkPressHandler = function () {
+    if (bookmarkScreen) {
+      onRemoveBookmark?.();
+    } else {
+      onBookmark?.();
+    }
+  };
+
   return (
     <View style={[styles.modal, style]}>
       <View style={styles.modalContent}>
         <Pressable
-          onPress={onHidePopover}
+          onPress={onShare}
           style={({pressed}) => [
             styles.modalInnerFlexbox,
             pressed && styles.pressed,
@@ -29,13 +42,18 @@ export default function PopoverMenu({
         </Pressable>
         <View style={styles.horizontalLine}></View>
         <Pressable
-          onPress={onBookmark}
+          onPress={bookmarkPressHandler}
           style={({pressed}) => [
             styles.modalInnerFlexbox,
             pressed && styles.pressed,
           ]}>
-          <BottomTabIcon source={BookmarkIcon} style={styles.icon} />
-          <Text style={styles.modalText}>Bookmark</Text>
+          <BottomTabIcon
+            source={bookmarkScreen ? FilledBookmarkIcon : BookmarkIcon}
+            style={styles.icon}
+          />
+          <Text style={styles.modalText}>
+            {bookmarkScreen ? 'Remove bookmark' : 'Bookmark'}
+          </Text>
         </Pressable>
       </View>
     </View>

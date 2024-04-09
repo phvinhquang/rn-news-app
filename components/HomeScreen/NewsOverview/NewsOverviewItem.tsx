@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,45 +6,48 @@ import {
   View,
   useColorScheme,
   Pressable,
+  Alert,
+  Share,
 } from 'react-native';
 import ThreeDots from '../../../assets/menu.png';
 import {Colors} from '../../../constants/Color';
-import {Overview, PressedItem} from '../../../screens/Home';
+import {Overview} from '../../../screens/Home';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../../../navigators/Stack';
+import {BookmarkInterface} from '../../../screens/Bookmarks';
+import PopoverMenu from '../../UI/PopoverMenu';
+import ModalOverlay from '../../UI/ModalOverlay';
+import {Bookmarks} from '../../../utils/database';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
-import {Bookmark} from '../../../screens/Bookmarks';
 
 interface NewsOverviewItemProp {
-  news: Overview | Bookmark;
+  news: Overview | BookmarkInterface;
   index: number;
-  onGetPosition: (pageX: number, pageY: number, item: PressedItem) => void;
-  onBookmark?: () => void;
+  bookmarkScreen?: boolean;
+  onRemoveBookmark?: (data: BookmarkInterface) => void;
 }
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
 
 export default function NewsOverviewItem({
   news,
-  onGetPosition,
+  bookmarkScreen,
+  onRemoveBookmark,
   index,
 }: NewsOverviewItemProp): React.JSX.Element {
+  const [showPopover, setShowPopover] = useState<boolean>(false);
+  const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
+
   const navigation = useNavigation<NavigationProps>();
   const openMenuRef = useRef<Image>(null);
 
-  const getPositionHandler = function () {
-    openMenuRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      onGetPosition(pageX, pageY, {...(news as Overview), index});
-    });
-  };
-
   // Go to Detail Screen function
   const goToDetailHanlder = function () {
-    navigation.push('Detail', {link: news.link});
+    navigation.push('Detail', {news: news as Overview});
   };
 
   TimeAgo.addLocale(en);
@@ -53,6 +56,65 @@ export default function NewsOverviewItem({
 
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
+
+  // Show popover handler
+  const showPopoverHandler = function () {
+    openMenuRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setPopoverCoord({x: pageX, y: pageY});
+    });
+    setShowPopover(true);
+  };
+
+  // Save item to bookmark database
+  const bookmarkHandler = function () {
+    try {
+      const existingItem = Bookmarks.get({link: news?.link});
+      if (existingItem) {
+        Alert.alert('Already bookmarked', 'You can see this in bookmark page');
+        setShowPopover(false);
+        return;
+      }
+
+      // Save item to bookmark database
+      Bookmarks.insert(
+        {
+          title: news?.title,
+          link: news?.link,
+          author: news?.author,
+          category: news?.category,
+          pubDate: news?.pubDate,
+          thumbnail: news?.thumbnail,
+          userEmail: 'quang@gmail.com',
+        },
+        true,
+      );
+      // Bookmarks.removeAllRecords();
+
+      // Close popover menu
+      setShowPopover(false);
+    } catch (err) {}
+  };
+
+  // Remove bookmark handler
+  const removeBookmarkHandler = async function () {
+    onRemoveBookmark?.(news as BookmarkInterface);
+
+    setShowPopover(false);
+  };
+
+  // Share handler
+  const shareHandler = async function () {
+    try {
+      await Share.share({
+        // message: 'Something',
+        url: news.link,
+      });
+
+      setShowPopover(false);
+    } catch (err: any) {
+      Alert.alert(err.message);
+    }
+  };
 
   return (
     <Pressable style={styles.item} onPress={goToDetailHanlder}>
@@ -83,7 +145,7 @@ export default function NewsOverviewItem({
 
           <Pressable
             // onPress={showModalHandler}
-            onPress={getPositionHandler}
+            onPress={showPopoverHandler}
             style={({pressed}) => [
               pressed && styles.pressed,
               pressed && {backgroundColor: '#ccc', borderRadius: 30},
@@ -95,7 +157,25 @@ export default function NewsOverviewItem({
             />
           </Pressable>
 
-          {/* {showModal && <PopoverMenu style={styles.modalPosition} />} */}
+          {showPopover && (
+            <ModalOverlay
+              onPress={() => {
+                setShowPopover(false);
+              }}>
+              <PopoverMenu
+                bookmarkScreen={bookmarkScreen}
+                onBookmark={bookmarkHandler}
+                onRemoveBookmark={removeBookmarkHandler}
+                onShare={shareHandler}
+                style={{
+                  position: 'absolute',
+                  top: popoverCoord.y,
+                  left: popoverCoord.x - (bookmarkScreen ? 150 : 110),
+                  width: bookmarkScreen ? 180 : 140,
+                }}
+              />
+            </ModalOverlay>
+          )}
         </View>
       </View>
     </Pressable>
@@ -183,9 +263,8 @@ const styles = StyleSheet.create({
   },
 
   modalPosition: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    zIndex: 100,
+    // position: 'absolute',
+    // bottom: 0,
+    // right: 0,
   },
 });

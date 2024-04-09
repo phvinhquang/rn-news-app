@@ -7,90 +7,23 @@ import {
 } from 'react-native';
 import {useState, useCallback} from 'react';
 import NewsOverviewItem from './NewsOverviewItem';
-import type {Overview, PressedItem} from '../../../screens/Home';
-import {Bookmark} from '../../../screens/Bookmarks';
+import type {Overview} from '../../../screens/Home';
+import {BookmarkInterface} from '../../../screens/Bookmarks';
 
 interface OverviewListProps {
-  data: (Overview | Bookmark)[];
+  data: (Overview | BookmarkInterface)[];
   isLoading: boolean;
+  bookmarkScreen?: boolean;
   onRefresh: () => void;
-  onShowPopover: (x: number, y: number, item: PressedItem) => void;
-  onBookmark?: () => void;
+  onRemoveBookmark?: (data: BookmarkInterface) => void;
 }
-
-// const DUMMY_DATA = [
-//   {
-//     id: 'n1',
-//     title: 'Some long long title, just for show. Some more text',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'World',
-//     date: new Date('2024-03-05').toISOString(),
-//   },
-//   {
-//     id: 'n2',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-//   {
-//     id: 'n3',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-//   {
-//     id: 'n4',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-//   {
-//     id: 'n5',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-//   {
-//     id: 'n6',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-//   {
-//     id: 'n7',
-//     title: 'Some long long title, just for show',
-//     image:
-//       'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
-//     author: 'Quang',
-//     category: 'Entertaiment',
-//     date: new Date().toISOString(),
-//   },
-// ];
 
 export default function NewsOverviewList({
   data,
   isLoading,
+  bookmarkScreen,
   onRefresh,
-  onShowPopover,
-
-  onBookmark,
+  onRemoveBookmark,
 }: OverviewListProps): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -121,8 +54,10 @@ export default function NewsOverviewList({
               <NewsOverviewItem
                 news={itemData.item}
                 index={itemData.index}
-                onGetPosition={onShowPopover}
-                onBookmark={onBookmark}
+                // onGetPosition={onShowPopover}
+                // onBookmark={onBookmark}
+                onRemoveBookmark={onRemoveBookmark}
+                bookmarkScreen={bookmarkScreen}
               />
             )}
             refreshControl={

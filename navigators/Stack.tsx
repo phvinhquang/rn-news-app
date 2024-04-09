@@ -12,12 +12,13 @@ import {useSelector, useDispatch} from 'react-redux';
 import {authActions} from '../store/auth-slice';
 import {RootState} from '../store';
 import DetailScreen from '../screens/Detail';
+import {Overview} from '../screens/Home';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
   SignUp: undefined;
   Main: undefined;
-  Detail: {link: string};
+  Detail: {news: Overview};
 };
 
 const Stack = createNativeStackNavigator<NativeStackParamsList>();

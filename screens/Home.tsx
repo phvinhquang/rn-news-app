@@ -16,7 +16,6 @@ import {CATEGORIES, Catergory} from '../constants/Categories';
 import {Bookmarks} from '../utils/database';
 
 import HomeHeader from '../components/HomeScreen/Header';
-import PopoverMenu from '../components/UI/PopoverMenu';
 import ModalOverlay from '../components/UI/ModalOverlay';
 
 export interface Overview {
@@ -47,15 +46,10 @@ export default function HomeScreen(): React.JSX.Element {
   const [overviews, setOverviews] = useState<Overview[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSourcePopover, setShowSourcePopover] = useState<boolean>(false);
-  const [showPopover, setShowPopover] = useState<boolean>(false);
-  const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
   const [newsSourcePopoverCoord, setNewsSourcePopoverCoord] = useState({
     x: 0,
     y: 0,
   });
-  const [pressedItemData, setPressedItemData] = useState<
-    PressedItem | undefined
-  >(undefined);
 
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
@@ -104,64 +98,10 @@ export default function HomeScreen(): React.JSX.Element {
     [newsSource, chosenCategory],
   );
 
-  // Show share/bookmark popover handler
-  const showPopoverHandler = function (
-    pageX: number,
-    pageY: number,
-    pressedItem: PressedItem,
-  ) {
-    setPressedItemData(pressedItem);
-    setPopoverCoord({x: pageX, y: pageY});
-    setShowPopover(true);
-  };
-
-  // Save item to bookmark database
-  // const bookmarkHandler = function () {
-  //   // Check if item is already bookmarked
-  //   if (pressedItemData?.bookmarked) {
-  //     Alert.alert('Already bookmarked', 'You can see this in bookmark page');
-  //     // Un-bookmark later
-  //     return;
-  //   }
-
-  //   // Save item to bookmark database
-  //   Bookmarks.insert(
-  //     {
-  //       title: pressedItemData?.title,
-  //       link: pressedItemData?.link,
-  //       author: pressedItemData?.author,
-  //       category: pressedItemData?.category,
-  //       pubDate: pressedItemData?.pubDate,
-  //       thumbnail: pressedItemData?.thumbnail,
-  //       userEmail: 'quang@gmail.com',
-  //     },
-  //     true,
-  //   );
-
-  //   // Bookmarks.removeAllRecords();
-  //   // Change bookmark status of the item then setOverviews
-  //   setOverviews(prev => {
-  //     const updatedState = [...prev];
-  //     updatedState[pressedItemData?.index as number].bookmarked = true;
-
-  //     return updatedState;
-  //   });
-
-  //   // Close popover menu
-  //   setShowPopover(false);
-  // };
-
   // Show news source popover
   const showNewsSourcePopoverHandler = function (pageX: number, pageY: number) {
     setNewsSourcePopoverCoord({x: pageX, y: pageY});
     setShowSourcePopover(true);
-  };
-
-  // Hide popover
-  const hidePopoverHandler = function () {
-    setPressedItemData(undefined);
-    setShowPopover(false);
-    setShowSourcePopover(false);
   };
 
   // Change news source handler
@@ -169,19 +109,22 @@ export default function HomeScreen(): React.JSX.Element {
     e: GestureResponderEvent,
     source: string,
   ) {
-    hidePopoverHandler();
+    setShowSourcePopover(false);
     setNewsSource(source);
     setTitle(source);
   };
 
   // Fetch news on initial load
   useEffect(() => {
+    Bookmarks.onAvailable(() => {});
+    Bookmarks.onLoaded(() => {});
+
     fetchData();
   }, [fetchData]);
 
   return (
     <>
-      <Pressable style={{flex: 1}} onPress={hidePopoverHandler}>
+      <Pressable style={{flex: 1}}>
         <View
           style={[styles.container, {backgroundColor: activeColor.primary}]}>
           <HomeHeader
@@ -198,29 +141,14 @@ export default function HomeScreen(): React.JSX.Element {
           <NewsOverviewList
             data={overviews}
             onRefresh={fetchData}
-            onShowPopover={showPopoverHandler}
+            // onShowPopover={showPopoverHandler}
             // onBookmark={bookmarkHandler}
             isLoading={isLoading}
           />
 
-          {/* Share and Boomark Popover */}
-          {showPopover && (
-            <ModalOverlay onPress={hidePopoverHandler}>
-              <PopoverMenu
-                onBookmark={() => {}}
-                onHidePopover={hidePopoverHandler}
-                style={{
-                  position: 'absolute',
-                  top: popoverCoord.y,
-                  left: popoverCoord.x - 110,
-                }}
-              />
-            </ModalOverlay>
-          )}
-
           {/* Change news source popover */}
           {showSourcePopover && (
-            <ModalOverlay onPress={hidePopoverHandler}>
+            <ModalOverlay onPress={() => setShowSourcePopover(false)}>
               <View
                 style={[
                   styles.sourcePopover,

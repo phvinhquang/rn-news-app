@@ -8,7 +8,7 @@ export default function ModalOverlay({
   onPress,
 }: PropsWithChildren & ModalOverlay) {
   return (
-    <Modal transparent>
+    <Modal transparent animationType="fade">
       <Pressable
         onPressIn={onPress}
         style={{flex: 1, backgroundColor: 'transparent'}}>
