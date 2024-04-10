@@ -71,7 +71,10 @@ export default function NewsOverviewItem({
   // Save item to bookmark database
   const bookmarkHandler = function () {
     try {
-      const existingItem = Bookmarks.get({link: news?.link});
+      const existingItem = Bookmarks.get({
+        link: news?.link,
+        userEmail: userEmail,
+      });
       if (existingItem) {
         Alert.alert('Already bookmarked', 'You can see this in bookmark page');
         setShowPopover(false);

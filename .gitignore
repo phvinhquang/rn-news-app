@@ -1,8 +1,5 @@
-screens/Detail.tsx
-components/DetailScreen/DetailHeader.tsx
 utils/checkBookmarkStatus.ts
 utils/i18n
-react-native.config.js
 
 
 
