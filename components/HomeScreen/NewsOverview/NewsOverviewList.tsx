@@ -5,7 +5,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import {useState, useCallback} from 'react';
+import {useState} from 'react';
 import NewsOverviewItem from './NewsOverviewItem';
 import type {Overview} from '../../../screens/Home';
 import {BookmarkInterface} from '../../../screens/Bookmarks';
@@ -45,7 +45,7 @@ export default function NewsOverviewList({
           <ActivityIndicator size="large" />
         </View>
       )}
-      {!isLoading && (
+      {!isLoading && data.length > 0 && (
         <>
           <FlatList
             data={data}
@@ -54,8 +54,6 @@ export default function NewsOverviewList({
               <NewsOverviewItem
                 news={itemData.item}
                 index={itemData.index}
-                // onGetPosition={onShowPopover}
-                // onBookmark={onBookmark}
                 onRemoveBookmark={onRemoveBookmark}
                 bookmarkScreen={bookmarkScreen}
               />
@@ -78,6 +76,7 @@ const styles = StyleSheet.create({
     // marginTop: 10,
     // marginLeft: 10,
     flex: 1,
+    paddingBottom: 80,
   },
 
   loadingContainer: {

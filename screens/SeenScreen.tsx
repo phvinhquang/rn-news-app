@@ -5,36 +5,31 @@ import {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import type {BookmarkInterface} from './Bookmarks';
 import {RootState} from '../store';
-import type {Catergory} from '../constants/Categories';
-import Categories from '../components/HomeScreen/Categories/Categories';
-import {CATEGORIES} from '../constants/Categories';
+import {useTranslation} from 'react-i18next';
+
+interface SeenInterface extends BookmarkInterface {
+  viewedAt: Object;
+}
 
 export default function SeenScreen(): React.JSX.Element {
-  const [data, setData] = useState<BookmarkInterface[]>([]);
+  const [data, setData] = useState<SeenInterface[]>([]);
   const userEmail = useSelector<RootState>(state => state.authentication.email);
-  // const [chosenCategory, setChosenCategory] = useState<Catergory>(
-  //   CATEGORIES[0],
-  // );
+  const newsSource = useSelector<RootState>(state => state.newsSource);
 
-  // CHANGE CATEGORY HANDLER
-  // const changeCategoryHandler = function (category: Catergory) {
-  //   setChosenCategory(category);
-
-  //   // Filter data in database and setData again
-  //   const result = Seens.data().filter(
-  //     (item: BookmarkInterface) =>
-  //       item.category === category.name && item.userEmail === userEmail,
-  //   );
-  //   result.reverse();
-
-  //   setData(result);
-  // };
+  const {t} = useTranslation();
 
   const getData = async function () {
     const data = await Seens.data().filter(
-      (item: BookmarkInterface) => item.userEmail === userEmail,
+      (item: SeenInterface) =>
+        item.userEmail === userEmail && item.author === newsSource,
     );
-    data.reverse();
+
+    // Sort data based on viewed-at time
+    data.sort(
+      (a: SeenInterface, b: SeenInterface) =>
+        (b.viewedAt as any) - (a.viewedAt as any),
+    );
+    // data.reverse();
 
     setData(data);
   };
@@ -46,18 +41,18 @@ export default function SeenScreen(): React.JSX.Element {
     Seens.onChange(() => {
       getData();
     });
-  }, []);
+  }, [newsSource]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Seen News</Text>
+        <Text style={styles.title}>{t('seenNews')}</Text>
       </View>
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
 
-      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} /> */}
-      {/* <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
+      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />
+      <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
 
       <NewsOverviewList data={data} onRefresh={() => {}} isLoading={false} />
     </SafeAreaView>

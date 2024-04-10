@@ -19,6 +19,7 @@ import {BookmarkInterface} from '../../../screens/Bookmarks';
 import PopoverMenu from '../../UI/PopoverMenu';
 import ModalOverlay from '../../UI/ModalOverlay';
 import {Bookmarks} from '../../../utils/database';
+import {useTranslation} from 'react-i18next';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
@@ -44,6 +45,7 @@ export default function NewsOverviewItem({
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
   const userEmail = useSelector<RootState>(state => state.authentication.email);
+  const {t} = useTranslation();
 
   const navigation = useNavigation<NavigationProps>();
   const openMenuRef = useRef<Image>(null);
@@ -76,7 +78,7 @@ export default function NewsOverviewItem({
         userEmail: userEmail,
       });
       if (existingItem) {
-        Alert.alert('Already bookmarked', 'You can see this in bookmark page');
+        Alert.alert(`${t('alreadyBookmarked')}`, `${t('seeBookmarkScreen')}`);
         setShowPopover(false);
         return;
       }
@@ -141,12 +143,16 @@ export default function NewsOverviewItem({
           {news.title}
         </Text>
 
-        <Text style={[styles.author, styles.greyText]}>By {news.author}</Text>
+        <Text style={[styles.author, styles.greyText]}>
+          {t('by')} {news.author}
+        </Text>
         <View style={styles.footer}>
           <View style={styles.footerInnerContainer}>
-            <Text style={styles.category}>{news.category}</Text>
+            <Text style={styles.category}>{t(news.category)}</Text>
             <Text style={[{fontSize: 8}, styles.greyText]}>{`\u25CF`}</Text>
-            <Text style={styles.greyText}>{time} ago</Text>
+            <Text style={styles.greyText}>
+              {time} {t('ago')}
+            </Text>
           </View>
 
           <Pressable

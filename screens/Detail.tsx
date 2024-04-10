@@ -22,7 +22,11 @@ export default function DetailScreen({route}: Props) {
         link: news.link,
         userEmail: userEmail,
       });
-      if (existingNews) return;
+      if (existingNews) {
+        // Update viewedAt property of existing news
+        await Seens.update(existingNews.id, {viewedAt: Date.now()});
+        return;
+      }
 
       // Insert news to db
       await Seens.insert({
@@ -33,6 +37,7 @@ export default function DetailScreen({route}: Props) {
         pubDate: news?.pubDate,
         thumbnail: news?.thumbnail,
         userEmail: userEmail,
+        viewedAt: new Date(),
       });
     };
 

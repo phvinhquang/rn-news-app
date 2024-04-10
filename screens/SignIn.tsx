@@ -17,7 +17,6 @@ type AuthenticationProps = StackScreenProps<NativeStackParamsList, 'SignIn'>;
 function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
   const {width, height} = useWindowDimensions();
   const theme = useColorScheme() ?? 'light';
-  // const isSignin = route.params.signIn;
 
   // Sytle and theme
   const activeColor = Colors[theme];

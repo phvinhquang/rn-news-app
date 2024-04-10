@@ -1,9 +1,10 @@
 import {Text, View, StyleSheet, ViewStyle, Pressable} from 'react-native';
-import BottomTabIcon from './BottomTabIcon';
+import Icon from './Icon';
 
 import ShareIcon from '../../assets/share.png';
 import BookmarkIcon from '../../assets/bookmark.png';
 import FilledBookmarkIcon from '../../assets/bottom-tab/bookmark.png';
+import {useTranslation} from 'react-i18next';
 
 interface PopoverProps {
   style?: ViewStyle;
@@ -20,6 +21,8 @@ export default function PopoverMenu({
   onShare,
   bookmarkScreen,
 }: PopoverProps) {
+  const {t} = useTranslation();
+
   const bookmarkPressHandler = function () {
     if (bookmarkScreen) {
       onRemoveBookmark?.();
@@ -37,8 +40,8 @@ export default function PopoverMenu({
             styles.modalInnerFlexbox,
             pressed && styles.pressed,
           ]}>
-          <BottomTabIcon source={ShareIcon} style={styles.icon} />
-          <Text style={styles.modalText}>Share</Text>
+          <Icon source={ShareIcon} style={styles.icon} />
+          <Text style={styles.modalText}>{t('share')}</Text>
         </Pressable>
         <View style={styles.horizontalLine}></View>
         <Pressable
@@ -47,12 +50,12 @@ export default function PopoverMenu({
             styles.modalInnerFlexbox,
             pressed && styles.pressed,
           ]}>
-          <BottomTabIcon
+          <Icon
             source={bookmarkScreen ? FilledBookmarkIcon : BookmarkIcon}
             style={styles.icon}
           />
           <Text style={styles.modalText}>
-            {bookmarkScreen ? 'Remove bookmark' : 'Bookmark'}
+            {bookmarkScreen ? t('removeBookmark') : t('bookmark')}
           </Text>
         </Pressable>
       </View>

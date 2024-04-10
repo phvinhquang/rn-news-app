@@ -1,6 +1,7 @@
 import {Pressable, View, Text, StyleSheet, useColorScheme} from 'react-native';
 import {Colors} from '../../../constants/Color';
 import type {Catergory} from '../../../constants/Categories';
+import {useTranslation} from 'react-i18next';
 
 type CategoryItemProps = {
   data: Catergory;
@@ -15,6 +16,7 @@ export default function CategoryItem({
 }: CategoryItemProps): React.JSX.Element {
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -30,7 +32,7 @@ export default function CategoryItem({
             {color: activeColor.textPrimary, fontSize: 16},
             highlight && {color: activeColor.primary},
           ]}>
-          {data.name}
+          {t(data.name)}
         </Text>
       </Pressable>
     </View>

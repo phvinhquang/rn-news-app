@@ -13,10 +13,12 @@ import {Colors} from '../constants/Color';
 import {useCallback, useEffect, useState} from 'react';
 import {fetchAndParseRss} from '../utils/rssHandler';
 import {CATEGORIES, Catergory} from '../constants/Categories';
-import {Bookmarks} from '../utils/database';
 
 import HomeHeader from '../components/HomeScreen/Header';
 import ModalOverlay from '../components/UI/ModalOverlay';
+import {useSelector, useDispatch} from 'react-redux';
+import {newsSourceActions} from '../store/news-source-slice';
+import {RootState} from '../store';
 
 export interface Overview {
   title: string;
@@ -39,7 +41,10 @@ export enum NewsSource {
 
 export default function HomeScreen(): React.JSX.Element {
   const [title, setTitle] = useState<string>(NewsSource.VnExpress);
-  const [newsSource, setNewsSource] = useState<string>(NewsSource.VnExpress);
+  // const [newsSource, setNewsSource] = useState<string>(NewsSource.VnExpress);
+  const newsSource = useSelector<RootState>(
+    state => state.newsSource,
+  ) as string;
   const [chosenCategory, setChosenCategory] = useState<Catergory>(
     CATEGORIES[0],
   );
@@ -50,6 +55,7 @@ export default function HomeScreen(): React.JSX.Element {
     x: 0,
     y: 0,
   });
+  const dispatch = useDispatch();
 
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
@@ -110,17 +116,15 @@ export default function HomeScreen(): React.JSX.Element {
     source: string,
   ) {
     setShowSourcePopover(false);
-    setNewsSource(source);
+    // setNewsSource(source);
+    dispatch(newsSourceActions.change(source));
     setTitle(source);
   };
 
   // Fetch news on initial load
   useEffect(() => {
-    Bookmarks.onAvailable(() => {});
-    Bookmarks.onLoaded(() => {});
-
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return (
     <>
@@ -141,8 +145,6 @@ export default function HomeScreen(): React.JSX.Element {
           <NewsOverviewList
             data={overviews}
             onRefresh={fetchData}
-            // onShowPopover={showPopoverHandler}
-            // onBookmark={bookmarkHandler}
             isLoading={isLoading}
           />
 

@@ -9,14 +9,12 @@ import {
 import type {StyleProp, ViewStyle} from 'react-native';
 import {Colors} from '../../constants/Color';
 
-type BottomTabIconProps = {
+type IconProps = {
   source: ImageSourcePropType;
   style?: StyleProp<ViewStyle>;
 };
 
-export default function BottomTabIcon(
-  props: BottomTabIconProps,
-): React.JSX.Element {
+export default function Icon(props: IconProps): React.JSX.Element {
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
 
