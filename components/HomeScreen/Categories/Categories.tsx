@@ -17,7 +17,6 @@ export default function Categories({
   const [chosenCategoy, setChosenCategory] = useState<Catergory>(CATEGORIES[0]);
 
   function categoryPressedHandler(category: Catergory): void {
-    // Otherwise choose category
     setChosenCategory(category);
     onChangeCategory(category);
   }

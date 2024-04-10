@@ -11,7 +11,7 @@ import BookmarksIconActive from '../assets/bottom-tab/bookmark.png';
 import BookmarksIcon from '../assets/bottom-tab/bookmark_unselected.png';
 import SettingIconActive from '../assets/bottom-tab/settings.png';
 import SettingIcon from '../assets/bottom-tab/settings_unselected.png';
-import BottomTabIcon from '../components/UI/BottomTabIcon';
+import Icon from '../components/UI/Icon';
 
 // Import Components
 import HomeScreen from '../screens/Home';
@@ -61,9 +61,9 @@ export default function BottomTabsNavigator() {
           // header: () => <HomeHeader title="VnExpress" />,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={HomeIcon} />;
+              return <Icon source={HomeIcon} />;
             } else {
-              return <BottomTabIcon source={HomeIconActive} />;
+              return <Icon source={HomeIconActive} />;
             }
           },
         }}
@@ -75,9 +75,9 @@ export default function BottomTabsNavigator() {
           headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={SearchIcon} />;
+              return <Icon source={SearchIcon} />;
             } else {
-              return <BottomTabIcon source={SearchIconActice} />;
+              return <Icon source={SearchIconActice} />;
             }
           },
         }}
@@ -89,9 +89,9 @@ export default function BottomTabsNavigator() {
           headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={BookmarksIcon} />;
+              return <Icon source={BookmarksIcon} />;
             } else {
-              return <BottomTabIcon source={BookmarksIconActive} />;
+              return <Icon source={BookmarksIconActive} />;
             }
           },
         }}
@@ -103,9 +103,9 @@ export default function BottomTabsNavigator() {
           headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={SettingIcon} />;
+              return <Icon source={SettingIcon} />;
             } else {
-              return <BottomTabIcon source={SettingIconActive} />;
+              return <Icon source={SettingIconActive} />;
             }
           },
         }}

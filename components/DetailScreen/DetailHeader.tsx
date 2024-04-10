@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, Pressable, Share, Alert} from 'react-native';
-import BottomTabIcon from '../UI/BottomTabIcon';
+import BottomTabIcon from '../UI/Icon';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Bookmarks} from '../../utils/database';

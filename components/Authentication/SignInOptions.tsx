@@ -18,6 +18,7 @@ import AplleIcon from '../../assets/signin_logo/signIn_apple.png';
 import EmailIcon from '../../assets/signin_logo/signIn_email.png';
 import {Colors} from '../../constants/Color';
 import {NativeStackParamsList} from '../../navigators/Stack';
+import {useTranslation} from 'react-i18next';
 
 interface SignInOptionsProps {
   signIn?: boolean;
@@ -28,6 +29,7 @@ function SignInOptions({signIn}: SignInOptionsProps): React.JSX.Element {
   const {height} = useWindowDimensions();
   const theme = useColorScheme() ?? 'light';
   const navigation = useNavigation<NavigationProps>();
+  const {t} = useTranslation();
 
   const goToSignIn = function () {
     navigation.replace('SignIn');
@@ -51,7 +53,9 @@ function SignInOptions({signIn}: SignInOptionsProps): React.JSX.Element {
             styles.line,
             {backgroundColor: activeColor.textPrimary},
           ]}></View>
-        <Text style={{color: activeColor.textPrimary}}>or sign in with</Text>
+        <Text style={{color: activeColor.textPrimary}}>
+          {t('orSignInWith')}
+        </Text>
         <View
           style={[
             styles.line,
@@ -77,10 +81,10 @@ function SignInOptions({signIn}: SignInOptionsProps): React.JSX.Element {
         <View style={styles.acceptanceContainer}>
           <Text
             style={[styles.acceptanceText, {color: activeColor.textPrimary}]}>
-            By signing up to News24 you are accepting our
+            {t('bySigningUp')}
             <Link to="/Main" style={styles.boldText}>
               {' '}
-              Terms & Conditions
+              {t('termsAndConditions')}
             </Link>
           </Text>
         </View>
@@ -89,9 +93,9 @@ function SignInOptions({signIn}: SignInOptionsProps): React.JSX.Element {
       {/* Move this to signin screen */}
       {signIn && (
         <Text style={[styles.acceptanceText, {color: activeColor.textPrimary}]}>
-          Don't have an account ?{' '}
+          {t('dontHaveAnAccount')}{' '}
           <Text style={styles.boldText} onPress={goToSignUp}>
-            Register
+            {t('register')}
           </Text>
         </Text>
       )}

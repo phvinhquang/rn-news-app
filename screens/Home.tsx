@@ -116,11 +116,8 @@ export default function HomeScreen(): React.JSX.Element {
 
   // Fetch news on initial load
   useEffect(() => {
-    Bookmarks.onAvailable(() => {});
-    Bookmarks.onLoaded(() => {});
-
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return (
     <>

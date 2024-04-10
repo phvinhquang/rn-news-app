@@ -8,6 +8,7 @@ import {NativeStackParamsList} from '../../navigators/Stack';
 import {signInAPI, signUpAPI} from '../../utils/api';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../../store/auth-slice';
+import {useTranslation} from 'react-i18next';
 
 interface AuthFormProps {
   signIn?: boolean;
@@ -22,9 +23,9 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string | boolean>(false);
   const [passwordError, setPasswordError] = useState<string | boolean>(false);
+  const {t} = useTranslation();
   const dispatch = useDispatch();
 
-  const navigation = useNavigation<StackNavigatorProp>();
   const {height} = useWindowDimensions();
 
   // Simple validation
@@ -46,17 +47,16 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
       } else {
         // Send HTTP request to signup
         await signUpAPI(username, email, password);
-        // Navigate to Choose Interest Screen
       }
     } catch (e: any) {
       if (e.message === 'auth/email-already-in-use')
-        setEmailError('Email already in use. Please choose another email');
+        setEmailError(t('emailAlreadyUsed'));
       if (e.message === 'auth/user-not-found') {
-        setEmailError('Email error');
+        setEmailError(t('emailNotFound'));
         setShowUsernameInput(false);
       }
       if (e.message === 'auth/wrong-password') {
-        setPasswordError('Incorrect password');
+        setPasswordError(t('incorrectPassword'));
         setShowUsernameInput(false);
       }
     } finally {
@@ -75,7 +75,7 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
         {showUsernameInput && (
           <View>
             <Input
-              title="Username"
+              title={t('username')}
               onGetValue={setUsername}
               error={false}
               onSetError={() => {}}
@@ -92,7 +92,7 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
         </View>
         <View>
           <Input
-            title="Password"
+            title={t('password')}
             isPassword={true}
             onGetValue={setPassword}
             error={passwordError}
@@ -103,7 +103,7 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
 
       <CustomButton
         style={buttonVerticalMarigin}
-        title={signIn ? 'Sign In' : 'Sign Up'}
+        title={signIn ? t('signIn') : t('signUp')}
         isLoading={isLoading}
         disabled={!inputsNotEmpty}
         onPress={submitHandler}

@@ -6,6 +6,7 @@ import {Text, View, TextInput, StyleSheet} from 'react-native';
 import showPasswordIcon from '../../assets/show_password/eye.png';
 import hidePasswordIcon from '../../assets/show_password/eye_hide.png';
 import {Colors} from '../../constants/Color';
+import {useTranslation} from 'react-i18next';
 
 interface InputProps {
   title: string;
@@ -25,6 +26,7 @@ function Input({
   const [input, setInput] = useState<string>('');
   const [showLabel, setShowLabel] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const {t} = useTranslation();
 
   // Input change handler
   function inputChangeHandler(inputText: string) {
@@ -92,8 +94,8 @@ function Input({
           </Pressable>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text style={errorMessage}>Incorrect password</Text>
-          <Text style={styles.forgotPassword}>Forgot Password ?</Text>
+          <Text style={errorMessage}>{t('incorrectPassword')}</Text>
+          <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
         </View>
       </View>
     );

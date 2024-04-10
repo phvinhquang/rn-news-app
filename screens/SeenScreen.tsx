@@ -8,10 +8,12 @@ import {RootState} from '../store';
 import type {Catergory} from '../constants/Categories';
 import Categories from '../components/HomeScreen/Categories/Categories';
 import {CATEGORIES} from '../constants/Categories';
+import {useTranslation} from 'react-i18next';
 
 export default function SeenScreen(): React.JSX.Element {
   const [data, setData] = useState<BookmarkInterface[]>([]);
   const userEmail = useSelector<RootState>(state => state.authentication.email);
+  const {t} = useTranslation();
   // const [chosenCategory, setChosenCategory] = useState<Catergory>(
   //   CATEGORIES[0],
   // );
@@ -51,13 +53,13 @@ export default function SeenScreen(): React.JSX.Element {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Seen News</Text>
+        <Text style={styles.title}>{t('seenNews')}</Text>
       </View>
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
 
-      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} /> */}
-      {/* <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
+      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />
+      <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
 
       <NewsOverviewList data={data} onRefresh={() => {}} isLoading={false} />
     </SafeAreaView>

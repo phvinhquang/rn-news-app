@@ -6,6 +6,7 @@ import {getFirebaseApp} from '../utils/firebaseConfig';
 import {getAuth} from 'firebase/auth';
 import {useState, useEffect} from 'react';
 import {View, ActivityIndicator} from 'react-native';
+import {useTranslation} from 'react-i18next';
 
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
@@ -13,6 +14,7 @@ import {authActions} from '../store/auth-slice';
 import {RootState} from '../store';
 import DetailScreen from '../screens/Detail';
 import {Overview} from '../screens/Home';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -30,9 +32,20 @@ export default function StackNavigator() {
     state => state.authentication.isSignedIn,
   );
   const dispatch = useDispatch();
+  const {i18n} = useTranslation();
 
   const app = getFirebaseApp();
   const auth = getAuth(app);
+
+  // Get language from storage
+  const getLanguageFromStorage = async function () {
+    try {
+      const language = await AsyncStorage.getItem('language');
+      if (language) i18n.changeLanguage(language);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // Check authentication status and dispatch login action
   useEffect(() => {
@@ -44,6 +57,8 @@ export default function StackNavigator() {
       }
       setIsLoading(false);
     });
+
+    getLanguageFromStorage();
   }, [auth]);
 
   // Show loading/splash screen while checking authentication
