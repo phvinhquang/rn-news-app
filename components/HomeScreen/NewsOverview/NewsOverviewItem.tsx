@@ -78,7 +78,7 @@ export default function NewsOverviewItem({
         userEmail: userEmail,
       });
       if (existingItem) {
-        Alert.alert('Already bookmarked', 'You can see this in bookmark page');
+        Alert.alert(`${t('alreadyBookmarked')}`, `${t('seeBookmarkScreen')}`);
         setShowPopover(false);
         return;
       }

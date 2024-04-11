@@ -18,6 +18,8 @@
   "share": "Chia sẻ",
   "bookmark": "Đánh dấu",
   "removeBookmark": "Bỏ đánh dấu",
+  "alreadyBookmarked": "Bài viết đã được đánh dấu",
+  "seeBookmarkScreen": "Bạn có thể xem bài viết ở trang Đã đánh dấu",
 
   "signIn": "Đăng nhập",
   "signUp": "Đăng kí",
@@ -42,6 +44,7 @@
   "changeLanguage": "Thay đổi ngôn ngữ",
   "logOut": "Đăng xuất",
   "terms": "Điều khoản và điều kiện",
+  "chooseLanguage": "Thay đổi ngôn ngữ",
 
   "loggingOut": "Đăng xuất ?",
   "areYouSure": "Bạn chắc chứ ?",

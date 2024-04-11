@@ -15,12 +15,16 @@ import {RootState} from '../store';
 import DetailScreen from '../screens/Detail';
 import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CategoriesSetting from '../screens/CategoriesSetting';
+import ChooseLanguage from '../screens/ChooseLanguage';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
   SignUp: undefined;
   Main: undefined;
   Detail: {news: Overview};
+  ChooseLanguage: undefined;
+  CategoriesSetting: undefined;
 };
 
 const Stack = createNativeStackNavigator<NativeStackParamsList>();
@@ -82,6 +86,16 @@ export default function StackNavigator() {
           <Stack.Screen
             name="Detail"
             component={DetailScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="CategoriesSetting"
+            component={CategoriesSetting}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ChooseLanguage"
+            component={ChooseLanguage}
             options={{headerShown: false}}
           />
         </>

@@ -18,6 +18,8 @@
   "share": "Share",
   "bookmark": "Bookmark",
   "removeBookmark": "Remove Bookmark",
+  "alreadyBookmarked": "News already bookmarked",
+  "seeBookmarkScreen": "You can see this in bookmark page",
 
   "signIn": "Sign In",
   "signUp": "Sign Up",
@@ -42,6 +44,7 @@
   "changeLanguage": "Change Language",
   "logOut": "Log out",
   "terms": "Terms & Conditions",
+  "chooseLanguage": "Choose Language",
 
   "loggingOut": "Log Out ?",
   "areYouSure": "Are you sure ?",

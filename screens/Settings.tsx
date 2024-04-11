@@ -1,22 +1,11 @@
-import {
-  Alert,
-  Button,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {signInAPI, signOutAPI} from '../utils/api';
+import {Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {signOutAPI} from '../utils/api';
 import {useTranslation} from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// import {useNavigation} from '@react-navigation/native';
-// import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-// import {BottomTabsParamsList} from '../navigators/BottomTabs';
+import {useNavigation} from '@react-navigation/native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {BottomTabsParamsList} from '../navigators/BottomTabs';
 
 // Icon
-import {ImageSourcePropType} from 'react-native';
 import ProfileIcon from '../assets/settings/profile.png';
 import AccountIcon from '../assets/settings/account.png';
 import InterestIcon from '../assets/settings/interests.png';
@@ -34,14 +23,15 @@ import {RootState} from '../store';
 import Icon from '../components/UI/Icon';
 import {TouchableOpacity} from 'react-native';
 
-// type NavigationProps = BottomTabNavigationProp<
-//   BottomTabsParamsList,
-//   'SettingsScreen'
-// >;
+type NavigationProps = BottomTabNavigationProp<
+  BottomTabsParamsList,
+  'SettingsScreen'
+>;
 
 export default function SettingsScreen(): React.JSX.Element {
   const dispatch = useDispatch();
-  const {t, i18n} = useTranslation();
+  const navigation = useNavigation<NavigationProps>();
+  const {t} = useTranslation();
 
   const userEmail = useSelector<RootState>(
     state => state.authentication.email,
@@ -63,27 +53,6 @@ export default function SettingsScreen(): React.JSX.Element {
         style: 'destructive',
       },
     ]);
-
-    // signOutAPI().then(() => {
-    //   dispatch(authActions.logout());
-    // });
-  };
-
-  // Save data to storage handler
-  const saveToStorage = async function () {
-    try {
-      await AsyncStorage.setItem('language', i18n.language);
-    } catch (err) {
-      Alert.alert((err as any).message);
-    }
-  };
-
-  // Change language handler
-  const changeLanguageHandler = function () {
-    if (i18n.language === 'en') i18n.changeLanguage('vn');
-    else i18n.changeLanguage('en');
-
-    saveToStorage();
   };
 
   return (
@@ -91,6 +60,8 @@ export default function SettingsScreen(): React.JSX.Element {
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{t('settings')}</Text>
       </View>
+
+      <Text style={{marginLeft: '5%'}}>{userEmail}</Text>
 
       <View style={styles.contentContainer}>
         <View>
@@ -122,7 +93,11 @@ export default function SettingsScreen(): React.JSX.Element {
         </View>
 
         <View>
-          <View style={styles.optionContainer}>
+          <TouchableOpacity
+            style={styles.optionContainer}
+            onPress={() =>
+              navigation.getParent()?.navigate('CategoriesSetting')
+            }>
             <View style={styles.innerOptionContainer}>
               <Icon source={InterestIcon} style={{width: 20, height: 20}} />
               <Text style={styles.optionText}>{t('interests')}</Text>
@@ -131,7 +106,7 @@ export default function SettingsScreen(): React.JSX.Element {
               source={ArrowRight}
               style={{width: 22, height: 22, marginRight: 10}}
             />
-          </View>
+          </TouchableOpacity>
           <View style={styles.bottomLine}></View>
         </View>
 
@@ -194,7 +169,7 @@ export default function SettingsScreen(): React.JSX.Element {
         <View>
           <TouchableOpacity
             style={styles.optionContainer}
-            onPress={changeLanguageHandler}>
+            onPress={() => navigation.getParent()?.navigate('ChooseLanguage')}>
             <View style={styles.innerOptionContainer}>
               <Icon source={LanguageIcon} style={{width: 20, height: 20}} />
               <Text style={styles.optionText}>{t('changeLanguage')}</Text>
