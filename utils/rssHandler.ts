@@ -10,24 +10,28 @@ export const fetchAndParseRss = async (
     source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
 
   try {
-    console.log(domain + enpoint);
+    console.log('rss', source);
+    console.log('rss', enpoint);
 
-    const response = await fetch(domain + enpoint);
+    const response = await fetch(enpoint);
     const xmlText = await response.text();
+    // console.log(xmlText);
 
     const items = xmlText.split('<item>');
     // Delete first item
     items.shift();
+    // console.log(items);
 
     const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
 
     let data;
 
     // Parse data from VnExpress
-    if (domain === vnexpressRssUrl) {
+    if (source === NewsSource.VnExpress) {
       data = items.map(item => {
         // Extract title, description, image, date and actually link to article
         const title = item.match(/<title>(.*?)<\/title>/)![1];
+        // console.log(title);
 
         const pubDate = item.match(/<pubDate>(.*?)<\/pubDate>/)![1];
 
@@ -35,16 +39,18 @@ export const fetchAndParseRss = async (
 
         const descriptionData = item.match(
           /<description>(.*?)<\/description>/,
-        )![1];
+        )?.[1];
 
         // const cdataRegex = /<!\[CDATA\[(.*?)\]\]>/;
         const urlRegex = /src="(.*?)"/;
-        const description = descriptionData.match(urlRegex);
+        const description = descriptionData?.match(urlRegex);
         let imageUrl;
 
         if (description) {
           imageUrl = description[1];
         }
+
+        // console.log(imageUrl);
 
         return {
           title: title || 'none',

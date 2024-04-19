@@ -3,6 +3,7 @@ import {
   CATEGORIES,
   CategoryInterface,
   Catergory,
+  TT_CATEGORIES,
   VE_CATEGORIES,
 } from '../constants/Categories';
 import {Alert} from 'react-native';
@@ -33,7 +34,8 @@ const categoriesSlice = createSlice({
     },
 
     setDefaultCurrentCategory(state) {
-      state.currentCategory = state.categories[0];
+      const shownCategory = state.categories.find(cat => cat.chosen);
+      state.currentCategory = shownCategory!;
     },
 
     toggle(state, action) {

@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-native';
 import {useCallback, useEffect} from 'react';
-import {Catergory} from '../constants/Categories';
+import {Catergory, TT_CATEGORIES, VE_CATEGORIES} from '../constants/Categories';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -23,12 +23,18 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../store';
 import {Swipeable} from 'react-native-gesture-handler';
 import {categoriesActions} from '../store/categories-slice';
+import {NewsSource} from './Home';
 
 type ScreenProps = StackScreenProps<NativeStackParamsList, 'CategoriesSetting'>;
 
 export default function CategoriesSetting({navigation}: ScreenProps) {
   // const [data, setData] = useState<Catergory[]>(CATEGORIES);
-  const data = useSelector<RootState>(state => state.categories) as Catergory[];
+  const data = useSelector<RootState>(
+    state => state.categories.categories,
+  ) as Catergory[];
+  const newsSource = useSelector<RootState>(
+    state => state.newsSource,
+  ) as string;
 
   const userEmail = useSelector<RootState>(state => state.authentication.email);
   const {t} = useTranslation();
@@ -38,10 +44,46 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
 
   const saveToStorage = async function (data: Catergory[]) {
     try {
-      await AsyncStorage.setItem(
+      const dataFromStorage = await AsyncStorage.getItem(
         `${userEmail}-categories`,
-        JSON.stringify(data),
       );
+      if (dataFromStorage) {
+        const parsedData = JSON.parse(dataFromStorage);
+
+        // console.log(newsSource);
+        // console.log(parsedData);
+
+        // if (newsSource === NewsSource.VnExpress) {
+        //   parsedData.vnexpress = data;
+        // }
+        // if (newsSource === NewsSource.TuoiTre) {
+        //   parsedData.tuoitre = data;
+        // }
+
+        parsedData[newsSource] = data;
+
+        await AsyncStorage.setItem(
+          `${userEmail}-categories`,
+          JSON.stringify(parsedData),
+        );
+      }
+      //  else {
+      //   // console.log(data);
+
+      //   const dataToSave = {
+      //     vnexpress: newsSource === NewsSource.VnExpress ? data : null,
+      //     tuoitre: newsSource === NewsSource.TuoiTre ? data : null,
+      //   };
+      //   await AsyncStorage.setItem(
+      //     `${userEmail}-categories`,
+      //     JSON.stringify(dataToSave),
+      //   );
+      // }
+
+      // await AsyncStorage.setItem(
+      //   `${userEmail}-categories`,
+      //   JSON.stringify(data),
+      // );
     } catch (err) {
       console.log(err);
     }
@@ -61,27 +103,36 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
     }
   };
 
-  // Save data to storage when data's changed
+  // Save data to storage when category's shown/hidden
   useEffect(() => {
     saveToStorage(data);
   }, [data]);
 
   // Get category order from storage
-  useEffect(() => {
-    const getDataFromStorage = async function () {
-      try {
-        const data = await AsyncStorage.getItem(`${userEmail}-categories`);
-        if (data) {
-          // setData(JSON.parse(data));
-          dispatch(categoriesActions.update(JSON.parse(data)));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  // useEffect(() => {
+  //   const getDataFromStorage = async function () {
+  //     try {
+  //       const dataFromStorage = await AsyncStorage.getItem(
+  //         `${userEmail}-categories`,
+  //       );
+  //       if (dataFromStorage && newsSource) {
+  //         const parsedData = JSON.parse(dataFromStorage);
+  //         if (newsSource === NewsSource.VnExpress) {
+  //           // setData(JSON.parse(data));
+  //           dispatch(categoriesActions.update(parsedData.vnexpress));
+  //         }
+  //         if (newsSource === NewsSource.TuoiTre) {
+  //           // setData(JSON.parse(data));
+  //           dispatch(categoriesActions.update(parsedData.tuoitre));
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    getDataFromStorage();
-  }, []);
+  //   getDataFromStorage();
+  // }, []);
 
   const renderItem = useCallback(
     ({item, drag, isActive, getIndex}: RenderItemParams<Catergory>) => {
@@ -131,7 +182,6 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
         </Pressable>
         <Text style={styles.title}>{t('interests')}</Text>
       </View>
-
       <View style={styles.listContainer}>
         <DraggableFlatList
           data={data}
@@ -140,13 +190,13 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
           onDragEnd={({data}) => dragEndHandler(data)}
         />
       </View>
-
-      {/* <Button
+      <Button
         title="Clear"
         onPress={async () =>
           console.log(await AsyncStorage.removeItem(`${userEmail}-categories`))
         }
       />
+
       <Button
         title="Get All Keys"
         onPress={async () => console.log(await AsyncStorage.getAllKeys())}
@@ -156,7 +206,7 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
         onPress={async () =>
           console.log(await AsyncStorage.getItem(`${userEmail}-categories`))
         }
-      /> */}
+      />
     </SafeAreaView>
   );
 }
@@ -164,6 +214,7 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
 const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: '5%',
+    height: '80%',
   },
   option: {
     alignItems: 'center',

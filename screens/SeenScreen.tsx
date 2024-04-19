@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 import type {BookmarkInterface} from './Bookmarks';
 import {RootState} from '../store';
 import {useTranslation} from 'react-i18next';
+import {NewsSource} from './Home';
 
 interface SeenInterface extends BookmarkInterface {
   viewedAt: Object;
@@ -19,9 +20,12 @@ export default function SeenScreen(): React.JSX.Element {
   const {t} = useTranslation();
 
   const getData = async function () {
+    const source =
+      newsSource === NewsSource.VnExpress ? 'VnExpress' : 'Tuoi Tre';
+
     const data = await Seens.data().filter(
       (item: SeenInterface) =>
-        item.userEmail === userEmail && item.author === newsSource,
+        item.userEmail === userEmail && item.author === source,
     );
 
     // Sort data based on viewed-at time

@@ -30,13 +30,9 @@ export default function Categories({
   onChangeCategory,
 }: CategoriesProps): React.JSX.Element {
   const flatlistRef = useRef<FlatList>(null);
-  // const [categories, setCategories] = useState<Catergory[]>(CATEGORIES);
   const categories = useSelector<RootState>(
     selectChosenCategories,
-  ) as Catergory[];
-  // const [chosenCategory, setChosenCategory] = useState<Catergory>(
-  //   categories[0],
-  // );
+  ) as CategoryInterface[];
   const chosenCategory = useSelector<RootState>(
     state => state.categories.currentCategory,
   ) as CategoryInterface;
@@ -53,60 +49,81 @@ export default function Categories({
   // Check if current chosen category is not chosen
   // If true, back to 1st category available
   useEffect(() => {
+    // console.log('infinity');
+
     const isShown = categories.find(cat => cat.name === chosenCategory.name);
     if (!isShown) {
-      dispatch(categoriesActions.setDefaultCurrentCategory());
+      dispatch(categoriesActions.changeCurrentCategory(categories[0]));
+      onChangeCategory(newsSource, categories[0]);
       // setChosenCategory(categories[0]);
-      // onChangeCategory(chosenCategory);
     }
   }, [categories]);
 
   // Back to list's top if news source change
-  useEffect(() => {
-    // setChosenCategory(categories[0]);
-    // onChangeCategory(chosenCategory);
+  // useEffect(() => {
+  //   // console.log(newsSource);
 
-    dispatch(
-      categoriesActions.update(
-        newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES,
-      ),
-    );
-    dispatch(categoriesActions.setDefaultCurrentCategory());
-    onChangeCategory(
-      newsSource,
-      newsSource === NewsSource.VnExpress ? VE_CATEGORIES[0] : TT_CATEGORIES[0],
-    );
+  //   const getDataFromStorage = async function () {
+  //     try {
+  //       const dataFromStorage = await AsyncStorage.getItem(
+  //         `${userEmail}-categories`,
+  //       );
+  //       if (dataFromStorage) {
+  //         const parsedData = JSON.parse(dataFromStorage);
+  //         if (newsSource === NewsSource.VnExpress && parsedData.vnexpress) {
+  //           dispatch(categoriesActions.update(parsedData.vnexpress));
+  //           dispatch(categoriesActions.setDefaultCurrentCategory());
+  //           onChangeCategory(newsSource, parsedData.vnexpress[0]);
+  //         }
+  //         if (newsSource === NewsSource.TuoiTre && parsedData.tuoitre) {
+  //           dispatch(categoriesActions.update(parsedData.tuoitre));
+  //           dispatch(categoriesActions.setDefaultCurrentCategory());
+  //           onChangeCategory(newsSource, parsedData.tuoitre[0]);
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
-  }, [newsSource]);
+  //   getDataFromStorage();
+  //   flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
+  // }, [newsSource]);
 
   // Get category order from storage
-  useEffect(() => {
-    const getDataFromStorage = async function () {
-      try {
-        const data = await AsyncStorage.getItem(`${userEmail}-categories`);
-        if (data) {
-          const result = JSON.parse(data);
+  // useEffect(() => {
+  //   const getDataFromStorage = async function () {
+  //     try {
+  //       const data = await AsyncStorage.getItem(`${userEmail}-categories`);
+  //       if (data) {
+  //         const result = JSON.parse(data);
 
-          // Filter out not-chosen category
-          // const filteredResult = result.filter(
-          //   (item: Catergory) => item.chosen,
-          // );
+  //         if (newsSource === NewsSource.VnExpress) {
+  //           dispatch(categoriesActions.update(result.vnexpress));
+  //           dispatch(categoriesActions.setDefaultCurrentCategory());
+  //           onChangeCategory(newsSource, result.vnexpress[0]);
+  //         }
+  //         if (newsSource === NewsSource.TuoiTre) {
+  //           dispatch(categoriesActions.update(result.tuoitre));
+  //           dispatch(categoriesActions.setDefaultCurrentCategory());
+  //           onChangeCategory(newsSource, result.tuoitre[0]);
+  //         }
 
-          // dispatch(categoriesActions.update(result));
+  //         // Filter out not-chosen category
+  //         // const filteredResult = result.filter(
+  //         //   (item: Catergory) => item.chosen,
+  //         // );
 
-          // setCategories(filteredResult);
-          // setChosenCategory(categories[0]);
-          // onChangeCategory(chosenCategory);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  //         // dispatch(categoriesActions.update(result));
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    // Get data if is focused
-    getDataFromStorage();
-  }, []);
+  //   // Get data if is focused
+  //   getDataFromStorage();
+  // }, []);
 
   return (
     <View style={styles.listContainer}>
