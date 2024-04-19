@@ -1,44 +1,53 @@
 import {View, FlatList, StyleSheet} from 'react-native';
 import CategoryItem from './CategoryItem';
 import {useEffect, useState, useRef, useLayoutEffect} from 'react';
-import {CATEGORIES} from '../../../constants/Categories';
+import {
+  CATEGORIES,
+  TT_CATEGORIES,
+  VE_CATEGORIES,
+} from '../../../constants/Categories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type {Catergory} from '../../../constants/Categories';
+import type {CategoryInterface, Catergory} from '../../../constants/Categories';
 import {useSelector, useDispatch} from 'react-redux';
 import {createSelector} from '@reduxjs/toolkit';
 
 import {RootState} from '../../../store';
 import {categoriesActions} from '../../../store/categories-slice';
+import {NewsSource} from '../../../screens/Home';
 
 interface CategoriesProps {
-  newsSource?: string;
-  onChangeCategory: (category: Catergory) => void;
+  newsSource: string;
+  onChangeCategory: (source: string, category: CategoryInterface) => void;
 }
 
 const selectChosenCategories = createSelector(
   (state: RootState) => state.categories,
-  categories => categories.filter(cat => cat.chosen),
+  categories => categories.categories.filter(cat => cat.chosen),
 );
 
 export default function Categories({
-  onChangeCategory,
   newsSource,
+  onChangeCategory,
 }: CategoriesProps): React.JSX.Element {
   const flatlistRef = useRef<FlatList>(null);
   // const [categories, setCategories] = useState<Catergory[]>(CATEGORIES);
   const categories = useSelector<RootState>(
     selectChosenCategories,
   ) as Catergory[];
-  const [chosenCategory, setChosenCategory] = useState<Catergory>(
-    categories[0],
-  );
+  // const [chosenCategory, setChosenCategory] = useState<Catergory>(
+  //   categories[0],
+  // );
+  const chosenCategory = useSelector<RootState>(
+    state => state.categories.currentCategory,
+  ) as CategoryInterface;
   const userEmail = useSelector<RootState>(state => state.authentication.email);
   const dispatch = useDispatch();
 
   // Category press handler
-  function categoryPressedHandler(category: Catergory): void {
-    setChosenCategory(category);
-    onChangeCategory(category);
+  function categoryPressedHandler(category: CategoryInterface): void {
+    // setChosenCategory(category);
+    dispatch(categoriesActions.changeCurrentCategory(category));
+    onChangeCategory(newsSource, category);
   }
 
   // Check if current chosen category is not chosen
@@ -46,15 +55,28 @@ export default function Categories({
   useEffect(() => {
     const isShown = categories.find(cat => cat.name === chosenCategory.name);
     if (!isShown) {
-      setChosenCategory(categories[0]);
-      onChangeCategory(categories[0]);
+      dispatch(categoriesActions.setDefaultCurrentCategory());
+      // setChosenCategory(categories[0]);
+      // onChangeCategory(chosenCategory);
     }
   }, [categories]);
 
   // Back to list's top if news source change
   useEffect(() => {
-    setChosenCategory(categories[0]);
-    onChangeCategory(categories[0]);
+    // setChosenCategory(categories[0]);
+    // onChangeCategory(chosenCategory);
+
+    dispatch(
+      categoriesActions.update(
+        newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES,
+      ),
+    );
+    dispatch(categoriesActions.setDefaultCurrentCategory());
+    onChangeCategory(
+      newsSource,
+      newsSource === NewsSource.VnExpress ? VE_CATEGORIES[0] : TT_CATEGORIES[0],
+    );
+
     flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
   }, [newsSource]);
 
@@ -71,11 +93,11 @@ export default function Categories({
           //   (item: Catergory) => item.chosen,
           // );
 
-          dispatch(categoriesActions.update(result));
+          // dispatch(categoriesActions.update(result));
 
           // setCategories(filteredResult);
-          setChosenCategory(categories[0]);
-          // onChangeCategory(categories[0]);
+          // setChosenCategory(categories[0]);
+          // onChangeCategory(chosenCategory);
         }
       } catch (err) {
         console.log(err);

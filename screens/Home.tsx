@@ -12,7 +12,12 @@ import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverview
 import {Colors} from '../constants/Color';
 import {useCallback, useEffect, useState} from 'react';
 import {fetchAndParseRss} from '../utils/rssHandler';
-import {CATEGORIES, Catergory} from '../constants/Categories';
+import {
+  CATEGORIES,
+  CategoryInterface,
+  Catergory,
+  VE_CATEGORIES,
+} from '../constants/Categories';
 
 import HomeHeader from '../components/HomeScreen/Header';
 import ModalOverlay from '../components/UI/ModalOverlay';
@@ -45,9 +50,12 @@ export default function HomeScreen(): React.JSX.Element {
   const newsSource = useSelector<RootState>(
     state => state.newsSource,
   ) as string;
-  const [chosenCategory, setChosenCategory] = useState<Catergory>(
-    CATEGORIES[0],
-  );
+  // const [chosenCategory, setChosenCategory] = useState<CategoryInterface>(
+  //   VE_CATEGORIES[0],
+  // );
+  const chosenCategory = useSelector<RootState>(
+    state => state.categories.currentCategory,
+  ) as CategoryInterface;
   const [overviews, setOverviews] = useState<Overview[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSourcePopover, setShowSourcePopover] = useState<boolean>(false);
@@ -61,16 +69,17 @@ export default function HomeScreen(): React.JSX.Element {
   const activeColor = Colors[theme];
 
   // Change category handler
-  const categoryChangeHandler = async function (chosenCategory: Catergory) {
+  const categoryChangeHandler = async function (
+    newsSource: string,
+    chosenCategory: CategoryInterface,
+  ) {
     setIsLoading(true);
-    setChosenCategory(chosenCategory);
+    // setChosenCategory(chosenCategory);
 
     try {
       const res = await fetchAndParseRss(
         newsSource,
-        newsSource === NewsSource.VnExpress
-          ? chosenCategory.vneUrl
-          : chosenCategory.tuoiTreUrl,
+        chosenCategory.url,
         chosenCategory.name,
       );
 
@@ -89,9 +98,7 @@ export default function HomeScreen(): React.JSX.Element {
       try {
         const res = await fetchAndParseRss(
           newsSource,
-          newsSource === NewsSource.VnExpress
-            ? chosenCategory.vneUrl
-            : chosenCategory.tuoiTreUrl,
+          chosenCategory.url,
           chosenCategory.name,
         );
 
@@ -123,6 +130,8 @@ export default function HomeScreen(): React.JSX.Element {
 
   // Fetch news on initial load
   useEffect(() => {
+    console.log('running ');
+
     fetchData();
   }, []);
 

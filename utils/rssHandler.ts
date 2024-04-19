@@ -10,6 +10,8 @@ export const fetchAndParseRss = async (
     source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
 
   try {
+    console.log(domain + enpoint);
+
     const response = await fetch(domain + enpoint);
     const xmlText = await response.text();
 
