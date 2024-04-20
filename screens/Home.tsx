@@ -26,6 +26,8 @@ import {newsSourceActions} from '../store/news-source-slice';
 import {categoriesActions} from '../store/categories-slice';
 import {RootState} from '../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
+import {Bookmarks} from '../utils/database';
 
 export interface Overview {
   title: string;
@@ -66,6 +68,7 @@ export default function HomeScreen(): React.JSX.Element {
     y: 0,
   });
   const userEmail = useSelector<RootState>(state => state.authentication.email);
+  const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
 
@@ -234,11 +237,34 @@ export default function HomeScreen(): React.JSX.Element {
         console.log(err);
       }
     };
-
     getDataFromStorage();
+
+    Bookmarks.onChange(() => {
+      console.log('on change');
+    });
 
     // fetchData(newsSource, chosenCategory);
   }, []);
+
+  // Set bookmarked false
+  useEffect(() => {
+    if (isFocused) {
+      Promise.all(
+        overviews.map(async item => {
+          const isBookmarked = await Bookmarks.get({link: item.link});
+          if (isBookmarked) {
+            item.bookmarked = true;
+          } else {
+            item.bookmarked = false;
+          }
+
+          return item;
+        }),
+      ).then(updatedData => {
+        setOverviews(updatedData);
+      });
+    }
+  }, [isFocused]);
 
   return (
     <>

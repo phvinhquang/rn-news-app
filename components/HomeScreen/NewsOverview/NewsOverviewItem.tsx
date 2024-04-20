@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -12,7 +12,7 @@ import {
 import ThreeDots from '../../../assets/menu.png';
 import {Colors} from '../../../constants/Color';
 import {Overview} from '../../../screens/Home';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../../../navigators/Stack';
 import {BookmarkInterface} from '../../../screens/Bookmarks';
@@ -20,12 +20,14 @@ import PopoverMenu from '../../UI/PopoverMenu';
 import ModalOverlay from '../../UI/ModalOverlay';
 import {Bookmarks} from '../../../utils/database';
 import {useTranslation} from 'react-i18next';
+import BookmarkedIcon from '../../../assets/bottom-tab/bookmark.png';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../store';
+import Icon from '../../UI/Icon';
 
 interface NewsOverviewItemProp {
   news: Overview | BookmarkInterface;
@@ -44,7 +46,11 @@ export default function NewsOverviewItem({
 }: NewsOverviewItemProp): React.JSX.Element {
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
+  const [bookmarked, setBookmarked] = useState<boolean>(
+    (news as Overview).bookmarked,
+  );
   const userEmail = useSelector<RootState>(state => state.authentication.email);
+  const isFocused = useIsFocused();
   const {t} = useTranslation();
 
   const navigation = useNavigation<NavigationProps>();
@@ -82,6 +88,11 @@ export default function NewsOverviewItem({
         setShowPopover(false);
         return;
       }
+
+      // Set state
+      // if (!(news as Overview).bookmarked) {
+      //   setBookmarked(true);
+      // }
 
       // Save item to bookmark database
       Bookmarks.insert(
@@ -124,6 +135,19 @@ export default function NewsOverviewItem({
     }
   };
 
+  // console.log((news as Overview).bookmarked);
+
+  useEffect(() => {
+    Bookmarks.onChange(async () => {
+      const isBookmarked = await Bookmarks.get({link: news.link});
+      if (isBookmarked) {
+        setBookmarked(true);
+      } else {
+        setBookmarked(false);
+      }
+    });
+  }, []);
+
   return (
     <Pressable style={styles.item} onPress={goToDetailHanlder}>
       <View style={styles.imageContainer}>
@@ -143,9 +167,14 @@ export default function NewsOverviewItem({
           {news.title}
         </Text>
 
-        <Text style={[styles.author, styles.greyText]}>
-          {t('by')} {news.author}
-        </Text>
+        <View style={styles.authorContainer}>
+          <Text style={[styles.author, styles.greyText]}>
+            {t('by')} {news.author}
+          </Text>
+          {bookmarked && !bookmarkScreen && (
+            <Icon source={BookmarkedIcon} style={{width: 20, height: 20}} />
+          )}
+        </View>
         <View style={styles.footer}>
           <View style={styles.footerInnerContainer}>
             <Text style={styles.category}>{t(news.category)}</Text>
@@ -175,6 +204,7 @@ export default function NewsOverviewItem({
                 setShowPopover(false);
               }}>
               <PopoverMenu
+                isBookmarked={bookmarked}
                 bookmarkScreen={bookmarkScreen}
                 onBookmark={bookmarkHandler}
                 onRemoveBookmark={removeBookmarkHandler}
@@ -224,9 +254,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
+
+  authorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   author: {
     fontWeight: '500',
   },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -272,11 +308,5 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.25,
     backgroundColor: '#fff',
-  },
-
-  modalPosition: {
-    // position: 'absolute',
-    // bottom: 0,
-    // right: 0,
   },
 });

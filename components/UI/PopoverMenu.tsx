@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next';
 interface PopoverProps {
   style?: ViewStyle;
   bookmarkScreen?: boolean;
+  isBookmarked: boolean;
   onBookmark?: () => void;
   onRemoveBookmark?: () => void;
   onShare: () => void;
@@ -20,6 +21,7 @@ export default function PopoverMenu({
   onRemoveBookmark,
   onShare,
   bookmarkScreen,
+  isBookmarked,
 }: PopoverProps) {
   const {t} = useTranslation();
 
@@ -51,7 +53,9 @@ export default function PopoverMenu({
             pressed && styles.pressed,
           ]}>
           <Icon
-            source={bookmarkScreen ? FilledBookmarkIcon : BookmarkIcon}
+            source={
+              bookmarkScreen || isBookmarked ? FilledBookmarkIcon : BookmarkIcon
+            }
             style={styles.icon}
           />
           <Text style={styles.modalText}>

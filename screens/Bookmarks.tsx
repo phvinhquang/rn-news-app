@@ -33,7 +33,7 @@ export default function BookmarksScreen(): React.JSX.Element {
         item.userEmail === userEmail && item.author === source,
     );
 
-    console.log('get data', data);
+    // console.log('get data', data);
 
     setData(data);
   };
