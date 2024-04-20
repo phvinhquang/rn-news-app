@@ -144,20 +144,20 @@ export default function HomeScreen(): React.JSX.Element {
     if (dataFromStorage) {
       const parsedData = JSON.parse(dataFromStorage);
       if (source === NewsSource.VnExpress) {
-        dispatch(categoriesActions.update(parsedData.vnexpress));
-        dispatch(categoriesActions.setDefaultCurrentCategory());
         const chosenCategory = parsedData.vnexpress.find(
           (cat: CategoryInterface) => cat.chosen,
         );
+        dispatch(categoriesActions.update(parsedData.vnexpress));
+        dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
         fetchData(source, chosenCategory);
       }
 
       if (source === NewsSource.TuoiTre) {
-        dispatch(categoriesActions.update(parsedData.tuoitre));
-        dispatch(categoriesActions.setDefaultCurrentCategory());
         const chosenCategory = parsedData.tuoitre.find(
           (cat: CategoryInterface) => cat.chosen,
         );
+        dispatch(categoriesActions.update(parsedData.tuoitre));
+        dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
         fetchData(source, chosenCategory);
       }
     }
