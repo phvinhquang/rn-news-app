@@ -14,6 +14,7 @@ interface InputProps {
   onGetValue: Function;
   onSetError: Function;
   error: string | boolean;
+  showForgotPassword?: boolean;
 }
 
 function Input({
@@ -21,6 +22,7 @@ function Input({
   isPassword,
   onGetValue,
   error,
+  showForgotPassword,
   onSetError,
 }: InputProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
@@ -95,7 +97,9 @@ function Input({
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text style={errorMessage}>{t('incorrectPassword')}</Text>
-          <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
+          {showForgotPassword && (
+            <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
+          )}
         </View>
       </View>
     );

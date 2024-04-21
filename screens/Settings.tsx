@@ -30,11 +30,10 @@ import {authActions} from '../store/auth-slice';
 import {RootState} from '../store';
 import Icon from '../components/UI/Icon';
 import {TouchableOpacity} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {NativeStackParamsList} from '../navigators/Stack';
 
-type NavigationProps = BottomTabNavigationProp<
-  BottomTabsParamsList,
-  'SettingsScreen'
->;
+type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
 export default function SettingsScreen(): React.JSX.Element {
   const [switchIsEnabled, setSwitchIsEnabled] = useState(false);
@@ -89,7 +88,9 @@ export default function SettingsScreen(): React.JSX.Element {
         </View>
 
         <View>
-          <View style={styles.optionContainer}>
+          <TouchableOpacity
+            style={styles.optionContainer}
+            onPress={() => console.log(navigation.push('Account'))}>
             <View style={styles.innerOptionContainer}>
               <Icon source={AccountIcon} style={{width: 20, height: 20}} />
               <Text style={styles.optionText}>{t('account')}</Text>
@@ -98,16 +99,14 @@ export default function SettingsScreen(): React.JSX.Element {
               source={ArrowRight}
               style={{width: 22, height: 22, marginRight: 10}}
             />
-          </View>
+          </TouchableOpacity>
           <View style={styles.bottomLine}></View>
         </View>
 
         <View>
           <TouchableOpacity
             style={styles.optionContainer}
-            onPress={() =>
-              navigation.getParent()?.navigate('CategoriesSetting')
-            }>
+            onPress={() => navigation.push('CategoriesSetting')}>
             <View style={styles.innerOptionContainer}>
               <Icon source={InterestIcon} style={{width: 20, height: 20}} />
               <Text style={styles.optionText}>{t('interests')}</Text>

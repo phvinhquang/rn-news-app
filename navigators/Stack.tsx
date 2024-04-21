@@ -1,12 +1,18 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BottomTabsNavigator from '../navigators/BottomTabs';
-import SignUp from '../screens/SignUp';
-import SignInScreen from '../screens/SignIn';
+
 import {getFirebaseApp} from '../utils/firebaseConfig';
 import {getAuth} from 'firebase/auth';
 import {useState, useEffect} from 'react';
 import {View, ActivityIndicator} from 'react-native';
 import {useTranslation} from 'react-i18next';
+
+import CategoriesSetting from '../screens/CategoriesSetting';
+import ChooseLanguage from '../screens/ChooseLanguage';
+import AccountScreen from '../screens/AccountScreen';
+import ChangePassword from '../screens/ChangePassword';
+import SignUp from '../screens/SignUp';
+import SignInScreen from '../screens/SignIn';
 
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
@@ -15,8 +21,6 @@ import {RootState} from '../store';
 import DetailScreen from '../screens/Detail';
 import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CategoriesSetting from '../screens/CategoriesSetting';
-import ChooseLanguage from '../screens/ChooseLanguage';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -25,6 +29,8 @@ export type NativeStackParamsList = {
   Detail: {news: Overview};
   ChooseLanguage: undefined;
   CategoriesSetting: undefined;
+  Account: undefined;
+  ChangePassword: undefined;
 };
 
 const Stack = createNativeStackNavigator<NativeStackParamsList>();
@@ -96,6 +102,16 @@ export default function StackNavigator() {
           <Stack.Screen
             name="ChooseLanguage"
             component={ChooseLanguage}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Account"
+            component={AccountScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePassword}
             options={{headerShown: false}}
           />
         </>
