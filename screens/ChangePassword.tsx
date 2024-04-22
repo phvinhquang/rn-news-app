@@ -1,4 +1,11 @@
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 import AccountHeader from '../components/Account/AccountHeader';
 import Input from '../components/UI/Input';
 import {useEffect, useState} from 'react';
@@ -19,6 +26,7 @@ export default function ChangePassword(): React.JSX.Element {
   const [confirmPasswordError, setConfirmPasswordError] = useState<
     string | boolean
   >(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // const [currentPasswordIsTouched, setCurrentPasswordIsTouched] =
   //   useState<boolean>(false);
@@ -32,6 +40,7 @@ export default function ChangePassword(): React.JSX.Element {
   // Change password request handler
   const changePasswordHandler = async function () {
     ////////
+    setIsLoading(true);
     try {
       await updatePasswordAPI(currentPassword, confirmNewPassword);
 
@@ -42,6 +51,8 @@ export default function ChangePassword(): React.JSX.Element {
       if (error.message === 'auth/wrong-password') {
         setCurrentPasswordError('Wrong Password');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,6 +86,21 @@ export default function ChangePassword(): React.JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
+      {isLoading && (
+        <Modal transparent>
+          <View
+            style={{
+              backgroundColor: '#999',
+              flex: 1,
+              opacity: 0.4,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size="large" color="black" />
+          </View>
+        </Modal>
+      )}
+
       <AccountHeader
         onSubmit={changePasswordHandler}
         buttonDisable={btnDisabled as boolean}

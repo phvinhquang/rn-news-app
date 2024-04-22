@@ -156,7 +156,7 @@ export default function NewsOverviewItem({
           source={{
             uri:
               news.thumbnail === 'none'
-                ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg'
+                ? 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'
                 : news.thumbnail,
           }}
         />
