@@ -88,7 +88,7 @@ export default function BookmarksScreen(): React.JSX.Element {
         data={data}
         onRefresh={() => {}}
         // onShowPopover={showPopoverHandler}
-        onRemoveBookmark={removeBookmarkHandler}
+        // onRemoveBookmark={removeBookmarkHandler}
         isLoading={false}
       />
     </SafeAreaView>

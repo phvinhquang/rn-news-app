@@ -14,6 +14,7 @@ import LockIcon from '../assets/settings/lock.png';
 import RightArrow from '../assets/settings/arrow_right.png';
 import {NativeStackParamsList} from '../navigators/Stack';
 import AccountHeader from '../components/Account/AccountHeader';
+import {useTranslation} from 'react-i18next';
 
 type SrceenProps = StackScreenProps<NativeStackParamsList>;
 
@@ -23,6 +24,7 @@ export default function AccountScreen({
   const userEmail = useSelector<RootState>(
     state => state.authentication.email,
   ) as string;
+  const {t} = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,7 +42,7 @@ export default function AccountScreen({
         onPress={() => navigation.push('ChangePassword')}>
         <View style={styles.actionInnerContainer}>
           <Icon source={LockIcon} style={{width: 20, height: 20}} />
-          <Text style={styles.actionText}>Change Password</Text>
+          <Text style={styles.actionText}>{t('changePassword')}</Text>
         </View>
 
         <Icon source={RightArrow} style={{width: 22, height: 22}} />

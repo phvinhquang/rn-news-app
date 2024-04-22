@@ -3,8 +3,13 @@ import BottomTabsNavigator from '../navigators/BottomTabs';
 
 import {getFirebaseApp} from '../utils/firebaseConfig';
 import {getAuth} from 'firebase/auth';
-import {useState, useEffect} from 'react';
-import {View, ActivityIndicator} from 'react-native';
+import {useState, useEffect, useLayoutEffect} from 'react';
+import {
+  View,
+  ActivityIndicator,
+  Appearance,
+  ColorSchemeName,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import CategoriesSetting from '../screens/CategoriesSetting';
@@ -13,6 +18,7 @@ import AccountScreen from '../screens/AccountScreen';
 import ChangePassword from '../screens/ChangePassword';
 import SignUp from '../screens/SignUp';
 import SignInScreen from '../screens/SignIn';
+import {useColorScheme} from 'react-native';
 
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
@@ -21,6 +27,7 @@ import {RootState} from '../store';
 import DetailScreen from '../screens/Detail';
 import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Colors} from '../constants/Color';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -41,6 +48,7 @@ export default function StackNavigator() {
   const isSignedIn = useSelector<RootState>(
     state => state.authentication.isSignedIn,
   );
+  const theme = useColorScheme();
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
 
@@ -71,10 +79,33 @@ export default function StackNavigator() {
     getLanguageFromStorage();
   }, [auth]);
 
+  useLayoutEffect(() => {
+    const getThemeFromStorage = async function () {
+      try {
+        const themeFromStorage = await AsyncStorage.getItem('theme');
+        if (themeFromStorage) {
+          Appearance.setColorScheme(themeFromStorage as ColorSchemeName);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getThemeFromStorage();
+  }, []);
+
+  const activeColor = Colors[theme as keyof typeof Colors];
+
   // Show loading/splash screen while checking authentication
   if (isLoading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: activeColor.primary,
+        }}>
         <ActivityIndicator size="large" color="#909090" />
       </View>
     );

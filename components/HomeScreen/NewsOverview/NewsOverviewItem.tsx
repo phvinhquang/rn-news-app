@@ -33,7 +33,6 @@ interface NewsOverviewItemProp {
   news: Overview | BookmarkInterface;
   index: number;
   bookmarkScreen?: boolean;
-  onRemoveBookmark?: (data: BookmarkInterface) => void;
 }
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
@@ -41,8 +40,6 @@ type NavigationProps = StackNavigationProp<NativeStackParamsList, 'Main'>;
 export default function NewsOverviewItem({
   news,
   bookmarkScreen,
-  onRemoveBookmark,
-  index,
 }: NewsOverviewItemProp): React.JSX.Element {
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [popoverCoord, setPopoverCoord] = useState({x: 0, y: 0});
@@ -89,11 +86,6 @@ export default function NewsOverviewItem({
         return;
       }
 
-      // Set state
-      // if (!(news as Overview).bookmarked) {
-      //   setBookmarked(true);
-      // }
-
       // Save item to bookmark database
       Bookmarks.insert(
         {
@@ -116,7 +108,7 @@ export default function NewsOverviewItem({
 
   // Remove bookmark handler
   const removeBookmarkHandler = async function () {
-    onRemoveBookmark?.(news as BookmarkInterface);
+    await Bookmarks.remove({link: news?.link}, true);
 
     setShowPopover(false);
   };
@@ -172,7 +164,7 @@ export default function NewsOverviewItem({
             {t('by')} {news.author}
           </Text>
           {bookmarked && !bookmarkScreen && (
-            <Icon source={BookmarkedIcon} style={{width: 20, height: 20}} />
+            <Icon source={BookmarkedIcon} style={{width: 18, height: 18}} />
           )}
         </View>
         <View style={styles.footer}>

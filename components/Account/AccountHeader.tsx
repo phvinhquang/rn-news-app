@@ -7,12 +7,12 @@ import {
   GestureResponderEvent,
 } from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {NativeStackParamsList} from '../../navigators/Stack';
+import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 import Icon from '../UI/Icon';
 import BackIcon from '../../assets/back.png';
-import {NativeStackParamsList} from '../../navigators/Stack';
-import {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
@@ -26,6 +26,7 @@ export default function AccountHeader({
   buttonDisable,
 }: HeaderProps): React.JSX.Element {
   // const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
+  const {t} = useTranslation();
   const navigation = useNavigation<NavigationProps>();
 
   return (
@@ -34,14 +35,14 @@ export default function AccountHeader({
         <Pressable onPress={() => navigation.goBack()}>
           <Icon source={BackIcon} />
         </Pressable>
-        <Text style={styles.screenTitle}>Account</Text>
+        <Text style={styles.screenTitle}>{t('account')}</Text>
       </View>
 
       <TouchableOpacity
         disabled={buttonDisable}
         onPress={(e: GestureResponderEvent) => onSubmit?.()}>
         <Text style={[styles.btnTitle, buttonDisable && styles.btnDisabled]}>
-          SAVE
+          {t('save')}
         </Text>
       </TouchableOpacity>
     </View>

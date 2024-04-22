@@ -15,7 +15,6 @@ interface OverviewListProps {
   isLoading: boolean;
   bookmarkScreen?: boolean;
   onRefresh: () => void;
-  onRemoveBookmark?: (data: BookmarkInterface) => void;
 }
 
 export default function NewsOverviewList({
@@ -23,7 +22,6 @@ export default function NewsOverviewList({
   isLoading,
   bookmarkScreen,
   onRefresh,
-  onRemoveBookmark,
 }: OverviewListProps): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -54,7 +52,6 @@ export default function NewsOverviewList({
               <NewsOverviewItem
                 news={itemData.item}
                 index={itemData.index}
-                onRemoveBookmark={onRemoveBookmark}
                 bookmarkScreen={bookmarkScreen}
               />
             )}

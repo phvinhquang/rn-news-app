@@ -49,11 +49,11 @@ function Input({
   // Input blurred handler
   function inputBlurHandler() {
     if (lengthValidation?.(input)) {
-      onSetError('Password must be at least 6 characters');
+      onSetError(t('passwordLength'));
     }
 
     if (input.trim() === '') {
-      onSetError('Password must not be empty');
+      onSetError(t('emptyPassword'));
     }
 
     setShowLabel(false);
@@ -66,15 +66,11 @@ function Input({
   // Style and theme
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
-  // const showLabelStyle: Object = {
-  //   color: '#909090',
-  // };
+
   const errorMessage: Object = {
     marginTop: '3%',
     // Has error actually
     color: error ? '#BA1818' : 'transparent',
-
-    // isSignIn ? '#BA1818' : 'transparent',
   };
 
   if (isPassword) {

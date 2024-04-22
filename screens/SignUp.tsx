@@ -21,10 +21,12 @@ function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
   // Sytle and theme
   const activeColor = Colors[theme];
 
+  const styles = customStyle(activeColor);
+
   return (
     <KeyboardAvoidingView style={{flex: 1}} behavior="height">
-      <SafeAreaView style={{flex: 1, backgroundColor: activeColor.primary}}>
-        <View style={[styles.root, {backgroundColor: activeColor.primary}]}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.root}>
           <AuthHeader />
           <AuthForm />
           <SignInOptions />
@@ -34,12 +36,15 @@ function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    paddingTop: '4%',
-    flex: 1,
-    alignItems: 'center',
-  },
-});
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    root: {
+      paddingTop: '4%',
+      flex: 1,
+      alignItems: 'center',
+      backgroundColor: activeColor.primary,
+    },
+    container: {flex: 1, backgroundColor: activeColor.primary},
+  });
 
 export default AuthenticationScreen;

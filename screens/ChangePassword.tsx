@@ -12,6 +12,7 @@ import {useEffect, useState} from 'react';
 import {signOutAPI, updatePasswordAPI} from '../utils/api';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../store/auth-slice';
+import {useTranslation} from 'react-i18next';
 
 export default function ChangePassword(): React.JSX.Element {
   const [currentPassword, setCurrentPassword] = useState<string>('');
@@ -27,6 +28,7 @@ export default function ChangePassword(): React.JSX.Element {
     string | boolean
   >(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const {t} = useTranslation();
 
   // const [currentPasswordIsTouched, setCurrentPasswordIsTouched] =
   //   useState<boolean>(false);
@@ -49,7 +51,7 @@ export default function ChangePassword(): React.JSX.Element {
     } catch (err) {
       const error = err as Error;
       if (error.message === 'auth/wrong-password') {
-        setCurrentPasswordError('Wrong Password');
+        setCurrentPasswordError(t('incorrectPassword'));
       }
     } finally {
       setIsLoading(false);
@@ -76,9 +78,7 @@ export default function ChangePassword(): React.JSX.Element {
       confirmNewPassword.trim().length >= 1 &&
       newPassword !== confirmNewPassword
     ) {
-      setConfirmPasswordError(
-        'New password and confirm new password must be the same',
-      );
+      setConfirmPasswordError(t('sameNewPassword'));
     } else {
       setConfirmPasswordError(false);
     }
@@ -109,7 +109,7 @@ export default function ChangePassword(): React.JSX.Element {
       <View style={styles.inputsContainer}>
         <Input
           isPassword={true}
-          title="Current Password"
+          title={t('currentPassword')}
           error={currentPasswordError}
           showForgotPassword={false}
           onGetValue={setCurrentPassword}
@@ -118,7 +118,7 @@ export default function ChangePassword(): React.JSX.Element {
 
         <Input
           isPassword={true}
-          title="New Password"
+          title={t('newPassword')}
           error={newPasswordError}
           showForgotPassword={false}
           onGetValue={setNewPassword}
@@ -128,7 +128,7 @@ export default function ChangePassword(): React.JSX.Element {
 
         <Input
           isPassword={true}
-          title="Confirm New Password"
+          title={t('confirmNewPassword')}
           error={confirmPasswordError}
           showForgotPassword={false}
           onGetValue={setConfirmNewPassword}

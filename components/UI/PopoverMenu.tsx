@@ -26,7 +26,7 @@ export default function PopoverMenu({
   const {t} = useTranslation();
 
   const bookmarkPressHandler = function () {
-    if (bookmarkScreen) {
+    if (bookmarkScreen || isBookmarked) {
       onRemoveBookmark?.();
     } else {
       onBookmark?.();
@@ -59,7 +59,9 @@ export default function PopoverMenu({
             style={styles.icon}
           />
           <Text style={styles.modalText}>
-            {bookmarkScreen ? t('removeBookmark') : t('bookmark')}
+            {bookmarkScreen || isBookmarked
+              ? t('removeBookmark')
+              : t('bookmark')}
           </Text>
         </Pressable>
       </View>

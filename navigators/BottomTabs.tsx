@@ -18,6 +18,8 @@ import HomeScreen from '../screens/Home';
 import BookmarksScreen from '../screens/Bookmarks';
 import SettingsScreen from '../screens/Settings';
 import SeenScreen from '../screens/SeenScreen';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store';
 
 export type BottomTabsParamsList = {
   HomeScreen: undefined;
@@ -32,6 +34,9 @@ const BottomTabs = createBottomTabNavigator<BottomTabsParamsList>();
 
 export default function BottomTabsNavigator() {
   const theme = useColorScheme() ?? 'light';
+  // const theme = useSelector<RootState>(
+  //   state => state.theme,
+  // ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   return (
@@ -51,7 +56,7 @@ export default function BottomTabsNavigator() {
           borderTopWidth: 0,
           backgroundColor: activeColor.primary,
         },
-        tabBarActiveTintColor: 'black',
+        // tabBarActiveTintColor: 'black',
       }}>
       <BottomTabs.Screen
         name="HomeScreen"
