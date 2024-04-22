@@ -3,8 +3,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
   signOut,
   updateProfile,
+  updatePassword,
 } from 'firebase/auth';
 // import {child, getDatabase, set, ref} from 'firebase/database';
 
@@ -61,5 +64,30 @@ export const signOutAPI = async function () {
     await signOut(auth);
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const updatePasswordAPI = async function (
+  oldPassword: string,
+  newPassword: string,
+) {
+  const app = getFirebaseApp();
+  const auth = getAuth(app);
+
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const credentials = EmailAuthProvider.credential(
+        user?.email as string,
+        oldPassword,
+      );
+
+      const isAuth = await reauthenticateWithCredential(user, credentials);
+      if (isAuth) {
+        await updatePassword(user, newPassword);
+      }
+    }
+  } catch (err) {
+    throw new Error((err as any).code);
   }
 };

@@ -13,6 +13,8 @@ interface InputProps {
   isPassword?: boolean;
   onGetValue: Function;
   onSetError: Function;
+  onFocus?: Function;
+  lengthValidation?: Function;
   error: string | boolean;
   showForgotPassword?: boolean;
 }
@@ -24,6 +26,8 @@ function Input({
   error,
   showForgotPassword,
   onSetError,
+  lengthValidation,
+  onFocus,
 }: InputProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
   const [showLabel, setShowLabel] = useState<boolean>(false);
@@ -44,9 +48,15 @@ function Input({
 
   // Input blurred handler
   function inputBlurHandler() {
-    if (input.trim() === '') {
-      setShowLabel(false);
+    if (lengthValidation?.(input)) {
+      onSetError('Password must be at least 6 characters');
     }
+
+    if (input.trim() === '') {
+      onSetError('Password must not be empty');
+    }
+
+    setShowLabel(false);
   }
 
   function toggleShowPassword() {
@@ -96,7 +106,9 @@ function Input({
           </Pressable>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text style={errorMessage}>{t('incorrectPassword')}</Text>
+          <Text style={errorMessage}>
+            {error ? error : t('incorrectPassword')}
+          </Text>
           {showForgotPassword && (
             <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
           )}

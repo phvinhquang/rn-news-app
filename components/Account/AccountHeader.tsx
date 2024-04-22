@@ -1,4 +1,11 @@
-import {View, Pressable, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Pressable,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  GestureResponderEvent,
+} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 
 import Icon from '../UI/Icon';
@@ -9,8 +16,16 @@ import {useNavigation} from '@react-navigation/native';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
-export default function AccountHeader(): React.JSX.Element {
-  const [btnDisabled, setBtnDisabled] = useState<boolean>(true);
+interface HeaderProps {
+  onSubmit?: Function;
+  buttonDisable?: boolean;
+}
+
+export default function AccountHeader({
+  onSubmit,
+  buttonDisable,
+}: HeaderProps): React.JSX.Element {
+  // const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const navigation = useNavigation<NavigationProps>();
 
   return (
@@ -22,11 +37,13 @@ export default function AccountHeader(): React.JSX.Element {
         <Text style={styles.screenTitle}>Account</Text>
       </View>
 
-      <Pressable disabled={btnDisabled}>
-        <Text style={[styles.btnTitle, btnDisabled && styles.btnDisabled]}>
+      <TouchableOpacity
+        disabled={buttonDisable}
+        onPress={(e: GestureResponderEvent) => onSubmit?.()}>
+        <Text style={[styles.btnTitle, buttonDisable && styles.btnDisabled]}>
           SAVE
         </Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 }

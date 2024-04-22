@@ -26,7 +26,7 @@ export default function AccountScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <AccountHeader />
+      <AccountHeader buttonDisable={true} />
 
       <View style={styles.emailContainer}>
         <Text style={styles.emailTitle}>Email</Text>
