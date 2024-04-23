@@ -40,7 +40,9 @@ function CustomButton({
           disabled && {backgroundColor: activeColor.secondary},
         ]}>
         <View style={{paddingHorizontal: 30, paddingVertical: 10}}>
-          {isLoading && <ActivityIndicator size="small" color="#eee" />}
+          {isLoading && (
+            <ActivityIndicator size="small" color={activeColor.secondary} />
+          )}
           {!isLoading && (
             <Text style={[styles.title, {color: activeColor.primary}]}>
               {title}

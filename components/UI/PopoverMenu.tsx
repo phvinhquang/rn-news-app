@@ -1,10 +1,18 @@
-import {Text, View, StyleSheet, ViewStyle, Pressable} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ViewStyle,
+  Pressable,
+  useColorScheme,
+} from 'react-native';
 import Icon from './Icon';
 
 import ShareIcon from '../../assets/share.png';
 import BookmarkIcon from '../../assets/bookmark.png';
 import FilledBookmarkIcon from '../../assets/bottom-tab/bookmark.png';
 import {useTranslation} from 'react-i18next';
+import {Colors} from '../../constants/Color';
 
 interface PopoverProps {
   style?: ViewStyle;
@@ -32,6 +40,10 @@ export default function PopoverMenu({
       onBookmark?.();
     }
   };
+
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
 
   return (
     <View style={[styles.modal, style]}>
@@ -69,44 +81,46 @@ export default function PopoverMenu({
   );
 }
 
-const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.8,
-  },
-  modal: {
-    width: 140,
-    height: 80,
-    borderRadius: 10,
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    pressed: {
+      opacity: 0.8,
+    },
+    modal: {
+      width: 140,
+      height: 80,
+      borderRadius: 10,
 
-    // Box shadow Android
-    elevation: 4,
-    // Box shadow IOS
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 2},
-    shadowRadius: 6,
-    shadowOpacity: 0.25,
-    backgroundColor: '#fff',
-  },
-  modalContent: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  modalInnerFlexbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingLeft: 15,
-    gap: 10,
-  },
-  horizontalLine: {
-    height: 1,
-    backgroundColor: '#ddd',
-  },
-  modalText: {
-    fontSize: 15,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-  },
-});
+      // Box shadow Android
+      elevation: 4,
+      // Box shadow IOS
+      shadowColor: 'black',
+      shadowOffset: {width: 2, height: 2},
+      shadowRadius: 6,
+      shadowOpacity: 0.25,
+      backgroundColor: activeColor.primary,
+    },
+    modalContent: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    modalInnerFlexbox: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 10,
+      paddingLeft: 15,
+      gap: 10,
+    },
+    horizontalLine: {
+      height: 1,
+      backgroundColor: '#ddd',
+    },
+    modalText: {
+      fontSize: 15,
+      color: activeColor.textPrimary,
+    },
+    icon: {
+      width: 20,
+      height: 20,
+    },
+  });

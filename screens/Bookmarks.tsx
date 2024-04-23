@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, SafeAreaView, View, Text, Button} from 'react-native';
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  Button,
+  useColorScheme,
+} from 'react-native';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
 import {Bookmarks} from '../utils/database';
 import {useState} from 'react';
@@ -7,6 +14,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {useTranslation} from 'react-i18next';
 import {NewsSource} from './Home';
+import {Colors} from '../constants/Color';
 
 export interface BookmarkInterface {
   id: string;
@@ -64,15 +72,19 @@ export default function BookmarksScreen(): React.JSX.Element {
   // };
 
   // Remove bookmark handler
-  const removeBookmarkHandler = async function (
-    pressedItemData: BookmarkInterface,
-  ) {
-    await Bookmarks.remove({link: pressedItemData?.link}, true);
+  // const removeBookmarkHandler = async function (
+  //   pressedItemData: BookmarkInterface,
+  // ) {
+  //   await Bookmarks.remove({link: pressedItemData?.link}, true);
 
-    Bookmarks.onChange(() => {
-      getData();
-    });
-  };
+  //   Bookmarks.onChange(() => {
+  //     getData();
+  //   });
+  // };
+
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +93,7 @@ export default function BookmarksScreen(): React.JSX.Element {
       </View>
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
-      <Button title="Get DB" onPress={() => console.log(Bookmarks.data())} />
+      {/* <Button title="Get DB" onPress={() => console.log(Bookmarks.data())} /> */}
 
       <NewsOverviewList
         bookmarkScreen={true}
@@ -95,20 +107,21 @@ export default function BookmarksScreen(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 20,
-    backgroundColor: 'white',
-  },
-  titleContainer: {
-    paddingHorizontal: '3%',
-    paddingTop: ' 2%',
-    paddingBottom: '3%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-});
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: 20,
+      backgroundColor: activeColor.primary,
+    },
+    titleContainer: {
+      paddingHorizontal: '3%',
+      paddingTop: ' 2%',
+      paddingBottom: '3%',
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: activeColor.textPrimary,
+    },
+  });

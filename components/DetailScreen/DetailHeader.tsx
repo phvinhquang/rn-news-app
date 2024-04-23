@@ -1,4 +1,12 @@
-import {View, Text, StyleSheet, Pressable, Share, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Share,
+  Alert,
+  useColorScheme,
+} from 'react-native';
 import BottomTabIcon from '../UI/Icon';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -14,6 +22,7 @@ import ShareBtn from '../../assets/share.png';
 import BookmarkBtn from '../../assets/bookmark.png';
 import FilledBookmarkBtn from '../../assets/bottom-tab/bookmark.png';
 import {RootState} from '../../store';
+import {Colors} from '../../constants/Color';
 
 type NavigationProps = NativeStackNavigationProp<
   NativeStackParamsList,
@@ -96,6 +105,10 @@ export default function DetailHeader({news}: HeaderProps) {
     }
   };
 
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
+
   return (
     <View style={styles.headerContainer}>
       <Pressable style={{marginLeft: 8}} onPress={goBackHandler}>
@@ -117,24 +130,25 @@ export default function DetailHeader({news}: HeaderProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
-    height: '6%',
-    backgroundColor: 'white',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    paddingBottom: '2%',
-  },
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    headerContainer: {
+      flexDirection: 'row',
+      height: '6%',
+      backgroundColor: activeColor.primary,
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+      paddingBottom: '2%',
+    },
 
-  innerContainer: {
-    marginRight: 15,
-    flexDirection: 'row',
-    gap: 20,
-  },
+    innerContainer: {
+      marginRight: 15,
+      flexDirection: 'row',
+      gap: 20,
+    },
 
-  icon: {
-    width: 30,
-    height: 30,
-  },
-});
+    icon: {
+      width: 30,
+      height: 30,
+    },
+  });

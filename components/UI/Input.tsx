@@ -66,11 +66,12 @@ function Input({
   // Style and theme
   const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
 
   const errorMessage: Object = {
     marginTop: '3%',
     // Has error actually
-    color: error ? '#BA1818' : 'transparent',
+    color: error ? activeColor.error : 'transparent',
   };
 
   if (isPassword) {
@@ -133,55 +134,58 @@ function Input({
   }
 }
 
-const styles = StyleSheet.create({
-  // Style Text Input
-  input: {
-    width: '100%',
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#909090',
-    paddingBottom: '1%',
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: '2%',
-    color: 'transparent',
-  },
-  showLabel: {
-    color: '#909090',
-  },
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    // Style Text Input
+    input: {
+      width: '100%',
+      fontSize: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: '#909090',
+      paddingBottom: '1%',
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+    },
+    label: {
+      fontSize: 16,
+      marginBottom: '2%',
+      color: 'transparent',
+    },
+    showLabel: {
+      color: '#909090',
+    },
 
-  // Style Password Input
-  passwordContainer: {
-    width: '100%',
-  },
-  passwordInnerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#909090',
-    paddingBottom: 8,
-  },
-  passwordInput: {
-    fontSize: 16,
-    flex: 1,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-  },
-  showPasswordContainer: {
-    width: 20,
-    height: 20,
-  },
-  showPassword: {
-    width: '100%',
-    height: '100%',
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginTop: '3%',
-  },
-});
+    // Style Password Input
+    passwordContainer: {
+      width: '100%',
+    },
+    passwordInnerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: '#909090',
+      paddingBottom: 8,
+    },
+    passwordInput: {
+      fontSize: 16,
+      flex: 1,
+      paddingVertical: 0,
+      paddingHorizontal: 0,
+    },
+    showPasswordContainer: {
+      width: 20,
+      height: 20,
+    },
+    showPassword: {
+      width: '100%',
+      height: '100%',
+      tintColor: activeColor.textPrimary,
+    },
+    forgotPassword: {
+      alignSelf: 'flex-end',
+      marginTop: '3%',
+      color: activeColor.textPrimary,
+    },
+  });
 
 export default Input;

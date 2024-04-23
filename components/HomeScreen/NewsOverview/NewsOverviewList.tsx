@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     // marginTop: 10,
     // marginLeft: 10,
     flex: 1,
-    paddingBottom: 80,
+    paddingBottom: 50,
   },
 
   loadingContainer: {

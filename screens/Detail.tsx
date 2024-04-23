@@ -1,12 +1,13 @@
 import DetailHeader from '../components/DetailScreen/DetailHeader';
 import {WebView} from 'react-native-webview';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, useColorScheme} from 'react-native';
 import {NativeStackParamsList} from '../navigators/Stack';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useEffect} from 'react';
 import {Seens} from '../utils/database';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store';
+import {Colors} from '../constants/Color';
 
 type Props = StackScreenProps<NativeStackParamsList, 'Detail'>;
 
@@ -44,8 +45,11 @@ export default function DetailScreen({route}: Props) {
     addToSeen();
   }, []);
 
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: activeColor.primary}}>
       <DetailHeader news={route.params.news} />
       <WebView
         style={{flex: 1}}

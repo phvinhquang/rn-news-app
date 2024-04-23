@@ -62,6 +62,8 @@ export default function ChooseLanguage({navigation}: ScreenProps) {
 
   const currentLanguage = i18n.language;
 
+  const styles = customStyle(activeColor);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: activeColor.primary}}>
       <View style={styles.titleContainer}>
@@ -88,34 +90,37 @@ export default function ChooseLanguage({navigation}: ScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    paddingHorizontal: '2%',
-    paddingTop: ' 2%',
-    paddingBottom: '3%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  title: {
-    paddingLeft: 10,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    titleContainer: {
+      paddingHorizontal: '2%',
+      paddingTop: ' 2%',
+      paddingBottom: '3%',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    title: {
+      paddingLeft: 10,
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: activeColor.textPrimary,
+    },
 
-  listContainer: {
-    paddingHorizontal: '5%',
-    marginTop: '5%',
-    gap: 20,
-  },
-  optionContainer: {
-    paddingBottom: '2%',
-    borderBottomWidth: 0.3,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  listText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
+    listContainer: {
+      paddingHorizontal: '5%',
+      marginTop: '5%',
+      gap: 20,
+    },
+    optionContainer: {
+      paddingBottom: '2%',
+      borderBottomWidth: 0.3,
+      // borderBottomColor: activeColor.secondary,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    listText: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: activeColor.textPrimary,
+    },
+  });

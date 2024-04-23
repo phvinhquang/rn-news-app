@@ -54,9 +54,9 @@ export const fetchAndParseRss = async (
 
           // console.log(imageUrl);
           const isBookmarked = await Bookmarks.get({link: link});
-          if (isBookmarked) {
-            console.log(link);
-          }
+          // if (isBookmarked) {
+          //   console.log(link);
+          // }
 
           return {
             title: title || 'none',

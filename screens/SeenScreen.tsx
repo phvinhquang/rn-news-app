@@ -1,4 +1,11 @@
-import {SafeAreaView, StyleSheet, Text, View, Button} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  useColorScheme,
+} from 'react-native';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
 import {Seens} from '../utils/database';
 import {useState, useEffect} from 'react';
@@ -7,6 +14,7 @@ import type {BookmarkInterface} from './Bookmarks';
 import {RootState} from '../store';
 import {useTranslation} from 'react-i18next';
 import {NewsSource} from './Home';
+import {Colors} from '../constants/Color';
 
 interface SeenInterface extends BookmarkInterface {
   viewedAt: Object;
@@ -47,6 +55,9 @@ export default function SeenScreen(): React.JSX.Element {
     });
   }, [newsSource]);
 
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
@@ -63,20 +74,21 @@ export default function SeenScreen(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 20,
-    backgroundColor: 'white',
-  },
-  titleContainer: {
-    paddingHorizontal: '3%',
-    paddingTop: ' 2%',
-    paddingBottom: '3%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-});
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: 20,
+      backgroundColor: activeColor.primary,
+    },
+    titleContainer: {
+      paddingHorizontal: '3%',
+      paddingTop: ' 2%',
+      paddingBottom: '3%',
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: activeColor.textPrimary,
+    },
+  });

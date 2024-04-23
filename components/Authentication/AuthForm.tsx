@@ -1,4 +1,11 @@
-import {StyleSheet, View, Text, useWindowDimensions, Alert} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  useWindowDimensions,
+  Alert,
+  useColorScheme,
+} from 'react-native';
 import Input from '../UI/Input';
 import CustomButton from '../UI/CustomButton';
 import {useState} from 'react';

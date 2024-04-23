@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Button,
+  useColorScheme,
 } from 'react-native';
 import {useCallback, useEffect} from 'react';
 import {Catergory, TT_CATEGORIES, VE_CATEGORIES} from '../constants/Categories';
@@ -24,6 +25,7 @@ import {RootState} from '../store';
 import {Swipeable} from 'react-native-gesture-handler';
 import {categoriesActions} from '../store/categories-slice';
 import {NewsSource} from './Home';
+import {Colors} from '../constants/Color';
 
 type ScreenProps = StackScreenProps<NativeStackParamsList, 'CategoriesSetting'>;
 
@@ -134,6 +136,10 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
   //   getDataFromStorage();
   // }, []);
 
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
+
   const renderItem = useCallback(
     ({item, drag, isActive, getIndex}: RenderItemParams<Catergory>) => {
       return (
@@ -175,7 +181,7 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
   );
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: activeColor.primary}}>
       <View style={styles.titleContainer}>
         <Pressable onPress={() => navigation.goBack()}>
           <Icon source={BackBtn} />
@@ -190,13 +196,13 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
           onDragEnd={({data}) => dragEndHandler(data)}
         />
       </View>
-      <Button
+
+      {/* <Button
         title="Clear"
         onPress={async () =>
           console.log(await AsyncStorage.removeItem(`${userEmail}-categories`))
         }
       />
-
       <Button
         title="Get All Keys"
         onPress={async () => console.log(await AsyncStorage.getAllKeys())}
@@ -206,62 +212,63 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
         onPress={async () =>
           console.log(await AsyncStorage.getItem(`${userEmail}-categories`))
         }
-      />
+      /> */}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  listContainer: {
-    paddingHorizontal: '5%',
-    height: '80%',
-  },
-  option: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: '4%',
-    paddingVertical: '4%',
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    listContainer: {
+      paddingHorizontal: '5%',
+      height: '80%',
+    },
+    option: {
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: '4%',
+      paddingVertical: '4%',
 
-    flexDirection: 'row',
-    borderBottomWidth: 0.6,
-    borderBottomColor: '#bbb',
-    backgroundColor: 'white',
-  },
-  optionActive: {
-    backgroundColor: '#ddd',
-    borderRadius: 10,
-  },
-  optionText: {
-    fontWeight: '600',
-    color: 'black',
-    fontSize: 16,
-    opacity: 0.7,
-    fontStyle: 'italic',
-  },
-  optionChosen: {
-    opacity: 1,
-    fontStyle: 'normal',
-  },
-  titleContainer: {
-    paddingHorizontal: '2%',
-    paddingTop: ' 3%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  button: {
-    width: 80,
-    height: 45,
-    marginBottom: 1,
-    backgroundColor: '#ccc',
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 3,
-  },
-});
+      flexDirection: 'row',
+      borderBottomWidth: 0.6,
+      borderBottomColor: '#bbb',
+      backgroundColor: activeColor.primary,
+    },
+    optionActive: {
+      backgroundColor: '#ddd',
+      borderRadius: 10,
+    },
+    optionText: {
+      fontWeight: '600',
+      color: activeColor.textPrimary,
+      fontSize: 16,
+      opacity: 0.7,
+      fontStyle: 'italic',
+    },
+    optionChosen: {
+      opacity: 1,
+      fontStyle: 'normal',
+    },
+    titleContainer: {
+      paddingHorizontal: '2%',
+      paddingTop: ' 3%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: activeColor.textPrimary,
+    },
+    button: {
+      width: 80,
+      height: 45,
+      marginBottom: 1,
+      backgroundColor: '#ccc',
+      alignSelf: 'flex-end',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 3,
+    },
+  });

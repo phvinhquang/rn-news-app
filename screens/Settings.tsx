@@ -95,12 +95,12 @@ export default function SettingsScreen(): React.JSX.Element {
         <Text style={styles.title}>{t('settings')}</Text>
       </View>
 
-      <Text style={{marginLeft: '5%', color: activeColor.textPrimary}}>
+      {/* <Text style={{marginLeft: '5%', color: activeColor.textPrimary}}>
         {userEmail}
-      </Text>
+      </Text> */}
 
       <View style={styles.contentContainer}>
-        <View>
+        {/* <View>
           <View style={styles.optionContainer}>
             <View style={styles.innerOptionContainer}>
               <Icon source={ProfileIcon} style={{width: 20, height: 20}} />
@@ -112,7 +112,7 @@ export default function SettingsScreen(): React.JSX.Element {
             />
           </View>
           <View style={styles.bottomLine}></View>
-        </View>
+        </View> */}
 
         <View>
           <TouchableOpacity

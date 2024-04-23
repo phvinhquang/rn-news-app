@@ -12,7 +12,7 @@ import {
 import ThreeDots from '../../../assets/menu.png';
 import {Colors} from '../../../constants/Color';
 import {Overview} from '../../../screens/Home';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../../../navigators/Stack';
 import {BookmarkInterface} from '../../../screens/Bookmarks';
@@ -47,7 +47,6 @@ export default function NewsOverviewItem({
     (news as Overview).bookmarked,
   );
   const userEmail = useSelector<RootState>(state => state.authentication.email);
-  const isFocused = useIsFocused();
   const {t} = useTranslation();
 
   const navigation = useNavigation<NavigationProps>();
@@ -203,9 +202,10 @@ export default function NewsOverviewItem({
                 onShare={shareHandler}
                 style={{
                   position: 'absolute',
-                  top: popoverCoord.y,
-                  left: popoverCoord.x - (bookmarkScreen ? 150 : 110),
-                  width: bookmarkScreen ? 180 : 140,
+                  top: popoverCoord.y + 5,
+                  left:
+                    popoverCoord.x - (bookmarkScreen || bookmarked ? 160 : 110),
+                  width: bookmarkScreen || bookmarked ? 190 : 140,
                 }}
               />
             </ModalOverlay>
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
   authorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   author: {
     fontWeight: '500',

@@ -5,6 +5,7 @@ import {
   View,
   Modal,
   ActivityIndicator,
+  useColorScheme,
 } from 'react-native';
 import AccountHeader from '../components/Account/AccountHeader';
 import Input from '../components/UI/Input';
@@ -13,6 +14,7 @@ import {signOutAPI, updatePasswordAPI} from '../utils/api';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../store/auth-slice';
 import {useTranslation} from 'react-i18next';
+import {Colors} from '../constants/Color';
 
 export default function ChangePassword(): React.JSX.Element {
   const [currentPassword, setCurrentPassword] = useState<string>('');
@@ -84,6 +86,10 @@ export default function ChangePassword(): React.JSX.Element {
     }
   }, [newPassword, confirmNewPassword]);
 
+  const theme = useColorScheme() as keyof typeof Colors;
+  const activeColor = Colors[theme];
+  const styles = customStyle(activeColor);
+
   return (
     <SafeAreaView style={styles.container}>
       {isLoading && (
@@ -140,14 +146,15 @@ export default function ChangePassword(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  inputsContainer: {
-    marginTop: '15%',
-    paddingHorizontal: '5%',
-    gap: 10,
-  },
-});
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: activeColor.primary,
+    },
+    inputsContainer: {
+      marginTop: '15%',
+      paddingHorizontal: '5%',
+      gap: 10,
+    },
+  });

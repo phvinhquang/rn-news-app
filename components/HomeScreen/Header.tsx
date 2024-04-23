@@ -73,7 +73,7 @@ export default function HomeHeader({
             ref={iconRef}
             style={[
               styles.notification,
-              //  {tintColor: activeColor.textPrimary}
+              theme === 'dark' && {tintColor: activeColor.textPrimary},
             ]}
             source={NotificatonIcon}
           />
