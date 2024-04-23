@@ -18,7 +18,7 @@ import {NativeStackParamsList} from '../../../navigators/Stack';
 import {BookmarkInterface} from '../../../screens/Bookmarks';
 import PopoverMenu from '../../UI/PopoverMenu';
 import ModalOverlay from '../../UI/ModalOverlay';
-import {Bookmarks} from '../../../utils/database';
+import {Bookmarks, Seens} from '../../../utils/database';
 import {useTranslation} from 'react-i18next';
 import BookmarkedIcon from '../../../assets/bottom-tab/bookmark.png';
 
@@ -129,6 +129,8 @@ export default function NewsOverviewItem({
   // console.log((news as Overview).bookmarked);
 
   useEffect(() => {
+    // console.log('item', (news as Overview).bookmarked);
+
     Bookmarks.onChange(async () => {
       const isBookmarked = await Bookmarks.get({link: news.link});
       if (isBookmarked) {

@@ -34,7 +34,7 @@ const SeenSchema = {
     pubDate: 'string',
     thumbnail: 'string',
     userEmail: 'string',
-    viewedAt: 'datetime',
+    viewedAt: 'number',
   },
 };
 

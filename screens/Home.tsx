@@ -179,9 +179,9 @@ export default function HomeScreen(): React.JSX.Element {
     // Load news source from storage if true
     const getDataFromStorage = async function () {
       try {
-        const newsSource = await AsyncStorage.getItem(
-          `${userEmail}-news-source`,
-        );
+        const newsSource =
+          (await AsyncStorage.getItem(`${userEmail}-news-source`)) ??
+          NewsSource.VnExpress;
         const categoriesInStorage = await AsyncStorage.getItem(
           `${userEmail}-categories`,
         );
@@ -195,19 +195,13 @@ export default function HomeScreen(): React.JSX.Element {
         if (categoriesInStorage) {
           const parsedData = JSON.parse(categoriesInStorage);
           const categories = parsedData[newsSource as string];
+
           const firstCategory = categories.find(
             (cat: CategoryInterface) => cat.chosen,
           );
           dispatch(categoriesActions.update(categories));
           dispatch(categoriesActions.changeCurrentCategory(firstCategory));
           fetchData(newsSource as string, firstCategory);
-
-          // if (newsSource === NewsSource.VnExpress) {
-          //   dispatch(categoriesActions.update(parsedData.vnexpress));
-          // }
-          // if (newsSource === NewsSource.TuoiTre) {
-          //   dispatch(categoriesActions.update(parsedData.tuoitre));
-          // }
         } else {
           const categories =
             newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES;
@@ -217,13 +211,6 @@ export default function HomeScreen(): React.JSX.Element {
           dispatch(categoriesActions.update(categories));
           dispatch(categoriesActions.changeCurrentCategory(firstCategory));
           fetchData(newsSource as string, firstCategory as CategoryInterface);
-
-          // if (newsSource === NewsSource.VnExpress) {
-          //   dispatch(categoriesActions.update(VE_CATEGORIES));
-          // }
-          // if (newsSource === NewsSource.TuoiTre) {
-          //   dispatch(categoriesActions.update(TT_CATEGORIES));
-          // }
 
           await AsyncStorage.setItem(
             `${userEmail}-categories`,
@@ -237,13 +224,12 @@ export default function HomeScreen(): React.JSX.Element {
         console.log(err);
       }
     };
+
     getDataFromStorage();
 
     Bookmarks.onChange(() => {
       console.log('on change');
     });
-
-    // fetchData(newsSource, chosenCategory);
   }, []);
 
   // Set bookmarked false
@@ -275,13 +261,11 @@ export default function HomeScreen(): React.JSX.Element {
             title={title === NewsSource.VnExpress ? 'VnExpress' : 'Tuổi Trẻ'}
             onShowNewsSource={showNewsSourcePopoverHandler}
           />
-
           {/* Categories */}
           <Categories
             onChangeCategory={categoryChangeHandler}
             newsSource={newsSource}
           />
-
           {/* <Button
             title="Clear"
             onPress={async () =>
@@ -290,6 +274,7 @@ export default function HomeScreen(): React.JSX.Element {
               )
             }
           />
+      
           <Button
             title="Clear News Source"
             onPress={async () =>
@@ -299,13 +284,11 @@ export default function HomeScreen(): React.JSX.Element {
             }
           />
           <Button
-            title="Source"
+            title="Categories"
             onPress={async () =>
-              console.log(
-                await AsyncStorage.getItem(`${userEmail}-news-source`),
-              )
+              console.log(await AsyncStorage.getItem(`${userEmail}-categories`))
             }
-          /> */}
+          />*/}
 
           {/* Articles list */}
           <NewsOverviewList
@@ -313,7 +296,6 @@ export default function HomeScreen(): React.JSX.Element {
             onRefresh={() => {}}
             isLoading={isLoading}
           />
-
           {/* Change news source popover */}
           {showSourcePopover && (
             <ModalOverlay onPress={() => setShowSourcePopover(false)}>

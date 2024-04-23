@@ -28,7 +28,7 @@ function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
       <SafeAreaView style={styles.container}>
         <View style={styles.root}>
           <AuthHeader />
-          <AuthForm />
+          <AuthForm signIn={false} />
           <SignInOptions />
         </View>
       </SafeAreaView>

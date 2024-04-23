@@ -1,23 +1,29 @@
 import {useState} from 'react';
 import {Image, Pressable, useColorScheme} from 'react-native';
 import {Text, View, TextInput, StyleSheet} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 
 // Show/Hide password Icon
 import showPasswordIcon from '../../assets/show_password/eye.png';
 import hidePasswordIcon from '../../assets/show_password/eye_hide.png';
 import {Colors} from '../../constants/Color';
 import {useTranslation} from 'react-i18next';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {NativeStackParamsList} from '../../navigators/Stack';
 
 interface InputProps {
   title: string;
   isPassword?: boolean;
   onGetValue: Function;
   onSetError: Function;
-  onFocus?: Function;
+  // onFocus?: Function;
   lengthValidation?: Function;
   error: string | boolean;
   showForgotPassword?: boolean;
 }
+
+type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
 function Input({
   title,
@@ -27,12 +33,13 @@ function Input({
   showForgotPassword,
   onSetError,
   lengthValidation,
-  onFocus,
-}: InputProps): React.JSX.Element {
+}: // onFocus,
+InputProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
   const [showLabel, setShowLabel] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const {t} = useTranslation();
+  const navigation = useNavigation<NavigationProps>();
 
   // Input change handler
   function inputChangeHandler(inputText: string) {
@@ -107,7 +114,11 @@ function Input({
             {error ? error : t('incorrectPassword')}
           </Text>
           {showForgotPassword && (
-            <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
+            <TouchableOpacity
+              style={{marginTop: '5%'}}
+              onPress={() => navigation.push('ForgotPassword')}>
+              <Text style={styles.forgotPassword}>{t('forgotPassword')}</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -183,7 +194,7 @@ const customStyle = (activeColor: any) =>
     },
     forgotPassword: {
       alignSelf: 'flex-end',
-      marginTop: '3%',
+      marginTop: '5%',
       color: activeColor.textPrimary,
     },
   });

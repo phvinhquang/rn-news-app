@@ -38,7 +38,7 @@ export default function DetailScreen({route}: Props) {
         pubDate: news?.pubDate,
         thumbnail: news?.thumbnail,
         userEmail: userEmail,
-        viewedAt: new Date(),
+        viewedAt: Date.now(),
       });
     };
 

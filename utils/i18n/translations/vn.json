@@ -73,6 +73,7 @@
   "emptyPassword": "Không được để trống password",
   "passwordLength": "Password phải có ít nhất 6 ký tự",
   "sameNewPassword": "Mật khẩu mới và Nhập lại mật khẩu mới phải trùng nhau",
+  "resetPasswordText": "Nhập email của bạn để nhận đường dẫn cài lại mật khẩu",
 
   "loggingOut": "Đăng xuất ?",
   "areYouSure": "Bạn chắc chứ ?",

@@ -28,6 +28,7 @@ import DetailScreen from '../screens/Detail';
 import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors} from '../constants/Color';
+import ForgotPassword from '../screens/ForgotPassword';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -38,6 +39,7 @@ export type NativeStackParamsList = {
   CategoriesSetting: undefined;
   Account: undefined;
   ChangePassword: undefined;
+  ForgotPassword: undefined;
 };
 
 const Stack = createNativeStackNavigator<NativeStackParamsList>();
@@ -156,6 +158,11 @@ export default function StackNavigator() {
           <Stack.Screen
             name="SignUp"
             component={SignUp}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPassword}
             options={{headerShown: false}}
           />
         </>

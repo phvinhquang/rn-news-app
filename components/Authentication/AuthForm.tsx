@@ -104,7 +104,7 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
             onGetValue={setPassword}
             error={passwordError}
             onSetError={setPasswordError}
-            showForgotPassword={true}
+            showForgotPassword={signIn}
           />
         </View>
       </View>

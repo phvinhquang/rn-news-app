@@ -66,8 +66,8 @@ export default function SeenScreen(): React.JSX.Element {
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
 
-      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />
-      <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
+      {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />*/}
+      {/* <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
 
       <NewsOverviewList data={data} onRefresh={() => {}} isLoading={false} />
     </SafeAreaView>

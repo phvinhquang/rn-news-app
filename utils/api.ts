@@ -8,6 +8,7 @@ import {
   signOut,
   updateProfile,
   updatePassword,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 // import {child, getDatabase, set, ref} from 'firebase/database';
 
@@ -87,6 +88,17 @@ export const updatePasswordAPI = async function (
         await updatePassword(user, newPassword);
       }
     }
+  } catch (err) {
+    throw new Error((err as any).code);
+  }
+};
+
+export const resetPasswordAPI = async function (email: string) {
+  const app = getFirebaseApp();
+  const auth = getAuth(app);
+
+  try {
+    await sendPasswordResetEmail(auth, email);
   } catch (err) {
     throw new Error((err as any).code);
   }
