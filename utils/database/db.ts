@@ -35,6 +35,33 @@ const SeenSchema = {
     thumbnail: 'string',
     userEmail: 'string',
     viewedAt: 'number',
+    bookmarked: 'bolean',
+  },
+};
+
+const NewsSchema = {
+  name: 'News',
+  props: {
+    title: 'string',
+    link: 'string',
+    author: 'string',
+    category: 'string',
+    pubDate: 'string',
+    thumbnail: 'string',
+    userEmail: 'string',
+    viewedAt: 'number',
+    bookmarked: 'bolean',
+  },
+};
+
+const userSchema = {
+  name: 'Users',
+  props: {
+    email: 'string',
+    newsSource: 'string',
+    categories: 'string',
+    language: 'string',
+    theme: 'string',
   },
 };
 
@@ -44,4 +71,12 @@ export const BookmarkDB = new Vasern({
 
 export const SeenDB = new Vasern({
   schemas: [SeenSchema],
+});
+
+export const UsersDB = new Vasern({
+  schemas: [userSchema],
+});
+
+export const NewsDB = new Vasern({
+  schemas: [NewsSchema],
 });

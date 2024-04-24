@@ -19,7 +19,6 @@ import {NativeStackParamsList} from '../navigators/Stack';
 import {useState} from 'react';
 import {resetPasswordAPI} from '../utils/api';
 import Toast from 'react-native-toast-message';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 type ResetPasswordProps = StackScreenProps<NativeStackParamsList>;
 

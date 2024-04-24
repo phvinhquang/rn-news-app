@@ -8,7 +8,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
-import {Bookmarks} from '../utils/database';
+import {Bookmarks, News} from '../utils/database';
 import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store';
@@ -36,12 +36,10 @@ export default function BookmarksScreen(): React.JSX.Element {
   const getData = async function () {
     const source =
       newsSource === NewsSource.VnExpress ? 'VnExpress' : 'Tuoi Tre';
-    const data = await Bookmarks.data().filter(
+    const data = await News.data().filter(
       (item: BookmarkInterface) =>
         item.userEmail === userEmail && item.author === source,
     );
-
-    // console.log('get data', data);
 
     setData(data);
   };
@@ -58,19 +56,6 @@ export default function BookmarksScreen(): React.JSX.Element {
     getData();
   }, [newsSource]);
 
-  // CHANGE CATEGORY HANDLER
-  // const changeCategoryHandler = function (category: Catergory) {
-  //   setChosenCategory(category);
-
-  //   // Filter data in database and setData again
-  //   const result = Bookmarks.data().filter(
-  //     (item: BookmarkInterface) =>
-  //       item.category === category.name && item.userEmail === userEmail,
-  //   );
-
-  //   setData(result);
-  // };
-
   // Remove bookmark handler
   // const removeBookmarkHandler = async function (
   //   pressedItemData: BookmarkInterface,
@@ -82,7 +67,9 @@ export default function BookmarksScreen(): React.JSX.Element {
   //   });
   // };
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 

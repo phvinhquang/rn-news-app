@@ -6,6 +6,7 @@ export const fetchAndParseRss = async (
   source: string,
   enpoint: string,
   category: string,
+  userEmail: string,
 ) => {
   // const domain =
   //   source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
@@ -53,7 +54,10 @@ export const fetchAndParseRss = async (
           }
 
           // console.log(imageUrl);
-          const isBookmarked = await Bookmarks.get({link: link});
+          const isBookmarked = await Bookmarks.get({
+            link: link,
+            userEmail: userEmail,
+          });
           // if (isBookmarked) {
           //   console.log(link);
           // }

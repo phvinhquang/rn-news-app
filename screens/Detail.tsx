@@ -39,13 +39,16 @@ export default function DetailScreen({route}: Props) {
         thumbnail: news?.thumbnail,
         userEmail: userEmail,
         viewedAt: Date.now(),
+        bookmarked: false,
       });
     };
 
     addToSeen();
   }, []);
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   return (
@@ -54,6 +57,7 @@ export default function DetailScreen({route}: Props) {
       <WebView
         style={{flex: 1}}
         source={{uri: route.params.news.link}}
+        originWhitelist={['*']}
         allowsInlineMediaPlayback={true}
       />
     </SafeAreaView>

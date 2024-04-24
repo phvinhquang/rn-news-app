@@ -18,6 +18,9 @@ import {NativeStackParamsList} from '../navigators/Stack';
 // Icon
 import ChosenIcon from '../assets/settings/have-chosen-16.png';
 import BackBtn from '../assets/back.png';
+import {Users} from '../utils/database';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store';
 
 interface MenuOptionInterface {
   title: string;
@@ -29,13 +32,17 @@ type ScreenProps = StackScreenProps<NativeStackParamsList, 'ChooseLanguage'>;
 
 export default function ChooseLanguage({navigation}: ScreenProps) {
   const {t, i18n} = useTranslation();
-  const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
+  const userEmail = useSelector<RootState>(state => state.authentication.email);
 
   // Save data to storage handler
-  const saveToStorage = async function () {
+  const saveToDb = async function (language: string) {
     try {
-      await AsyncStorage.setItem('language', i18n.language);
+      const userInDb = await Users.get({email: userEmail});
+      await Users.update(userInDb.id, {language: language});
     } catch (err) {
       Alert.alert((err as any).message);
     }
@@ -47,7 +54,7 @@ export default function ChooseLanguage({navigation}: ScreenProps) {
       key: 'en',
       onPress: () => {
         i18n.changeLanguage('en');
-        saveToStorage();
+        saveToDb('en');
       },
     },
     {
@@ -55,7 +62,7 @@ export default function ChooseLanguage({navigation}: ScreenProps) {
       key: 'vn',
       onPress: () => {
         i18n.changeLanguage('vn');
-        saveToStorage();
+        saveToDb('vn');
       },
     },
   ];

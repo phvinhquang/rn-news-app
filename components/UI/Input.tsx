@@ -11,16 +11,18 @@ import {Colors} from '../../constants/Color';
 import {useTranslation} from 'react-i18next';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {NativeStackParamsList} from '../../navigators/Stack';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store';
 
 interface InputProps {
   title: string;
   isPassword?: boolean;
   onGetValue: Function;
   onSetError: Function;
-  // onFocus?: Function;
   lengthValidation?: Function;
   error: string | boolean;
   showForgotPassword?: boolean;
+  // useDefaultTheme?: boolean
 }
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
@@ -33,11 +35,13 @@ function Input({
   showForgotPassword,
   onSetError,
   lengthValidation,
-}: // onFocus,
-InputProps): React.JSX.Element {
+}: InputProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
   const [showLabel, setShowLabel] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const isSignedIn = useSelector<RootState>(
+    state => state.authentication.isSignedIn,
+  );
   const {t} = useTranslation();
   const navigation = useNavigation<NavigationProps>();
 
@@ -59,7 +63,7 @@ InputProps): React.JSX.Element {
       onSetError(t('passwordLength'));
     }
 
-    if (input.trim() === '') {
+    if (input.trim() === '' && isPassword) {
       onSetError(t('emptyPassword'));
     }
 
@@ -71,7 +75,13 @@ InputProps): React.JSX.Element {
   }
 
   // Style and theme
-  const theme = useColorScheme() ?? 'light';
+
+  let theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
+  if (!isSignedIn) {
+    theme = useColorScheme() as keyof typeof Colors;
+  }
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 

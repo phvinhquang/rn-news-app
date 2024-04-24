@@ -38,14 +38,15 @@ import {NativeStackParamsList} from '../navigators/Stack';
 import {themeActions} from '../store/theme-slice';
 import {Colors} from '../constants/Color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Users} from '../utils/database';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
 export default function SettingsScreen(): React.JSX.Element {
   const [switchIsEnabled, setSwitchIsEnabled] = useState(false);
   const dispatch = useDispatch();
-  // const theme = useSelector<RootState>(state => state.theme);
-  const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(state => state.theme);
+  // const theme = useColorScheme() ?? 'light';
   const activeColor = Colors[theme as keyof typeof Colors];
   const navigation = useNavigation<NavigationProps>();
   const userEmail = useSelector<RootState>(
@@ -55,11 +56,12 @@ export default function SettingsScreen(): React.JSX.Element {
 
   const toggleSwitch = async () => {
     setSwitchIsEnabled(prev => !prev);
-    // dispatch(themeActions.toggle());
-    Appearance.setColorScheme(theme === 'light' ? 'dark' : 'light');
+    dispatch(themeActions.toggle());
+    // Appearance.setColorScheme(theme === 'light' ? 'dark' : 'light');
 
-    // Save to storage
-    await AsyncStorage.setItem('theme', theme === 'light' ? 'dark' : 'light');
+    // Save to database
+    const user = await Users.get({email: userEmail});
+    await Users.update(user.id, {theme: theme === 'light' ? 'dark' : 'light'});
   };
 
   // Log out handler

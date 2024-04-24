@@ -33,10 +33,10 @@ export type BottomTabsParamsList = {
 const BottomTabs = createBottomTabNavigator<BottomTabsParamsList>();
 
 export default function BottomTabsNavigator() {
-  const theme = useColorScheme() ?? 'light';
-  // const theme = useSelector<RootState>(
-  //   state => state.theme,
-  // ) as keyof typeof Colors;
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   return (

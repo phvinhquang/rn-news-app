@@ -20,6 +20,7 @@ import {useTranslation} from 'react-i18next';
 interface AuthFormProps {
   signIn?: boolean;
 }
+
 type StackNavigatorProp = StackNavigationProp<NativeStackParamsList, 'SignUp'>;
 
 function AuthForm({signIn}: AuthFormProps): React.JSX.Element {

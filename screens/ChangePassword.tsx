@@ -11,10 +11,11 @@ import AccountHeader from '../components/Account/AccountHeader';
 import Input from '../components/UI/Input';
 import {useEffect, useState} from 'react';
 import {signOutAPI, updatePasswordAPI} from '../utils/api';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {authActions} from '../store/auth-slice';
 import {useTranslation} from 'react-i18next';
 import {Colors} from '../constants/Color';
+import {RootState} from '../store';
 
 export default function ChangePassword(): React.JSX.Element {
   const [currentPassword, setCurrentPassword] = useState<string>('');
@@ -31,13 +32,6 @@ export default function ChangePassword(): React.JSX.Element {
   >(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {t} = useTranslation();
-
-  // const [currentPasswordIsTouched, setCurrentPasswordIsTouched] =
-  //   useState<boolean>(false);
-  // const [newPasswordIsTouched, setNewPasswordIsTouched] =
-  //   useState<boolean>(false);
-  // const [confirmPasswordIsTouched, setConfirmPasswordIsTouched] =
-  //   useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -86,7 +80,9 @@ export default function ChangePassword(): React.JSX.Element {
     }
   }, [newPassword, confirmNewPassword]);
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 

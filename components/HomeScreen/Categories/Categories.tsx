@@ -59,71 +59,9 @@ export default function Categories({
     }
   }, [categories]);
 
-  // Back to list's top if news source change
-  // useEffect(() => {
-  //   // console.log(newsSource);
-
-  //   const getDataFromStorage = async function () {
-  //     try {
-  //       const dataFromStorage = await AsyncStorage.getItem(
-  //         `${userEmail}-categories`,
-  //       );
-  //       if (dataFromStorage) {
-  //         const parsedData = JSON.parse(dataFromStorage);
-  //         if (newsSource === NewsSource.VnExpress && parsedData.vnexpress) {
-  //           dispatch(categoriesActions.update(parsedData.vnexpress));
-  //           dispatch(categoriesActions.setDefaultCurrentCategory());
-  //           onChangeCategory(newsSource, parsedData.vnexpress[0]);
-  //         }
-  //         if (newsSource === NewsSource.TuoiTre && parsedData.tuoitre) {
-  //           dispatch(categoriesActions.update(parsedData.tuoitre));
-  //           dispatch(categoriesActions.setDefaultCurrentCategory());
-  //           onChangeCategory(newsSource, parsedData.tuoitre[0]);
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   getDataFromStorage();
-  //   flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
-  // }, [newsSource]);
-
-  // Get category order from storage
-  // useEffect(() => {
-  //   const getDataFromStorage = async function () {
-  //     try {
-  //       const data = await AsyncStorage.getItem(`${userEmail}-categories`);
-  //       if (data) {
-  //         const result = JSON.parse(data);
-
-  //         if (newsSource === NewsSource.VnExpress) {
-  //           dispatch(categoriesActions.update(result.vnexpress));
-  //           dispatch(categoriesActions.setDefaultCurrentCategory());
-  //           onChangeCategory(newsSource, result.vnexpress[0]);
-  //         }
-  //         if (newsSource === NewsSource.TuoiTre) {
-  //           dispatch(categoriesActions.update(result.tuoitre));
-  //           dispatch(categoriesActions.setDefaultCurrentCategory());
-  //           onChangeCategory(newsSource, result.tuoitre[0]);
-  //         }
-
-  //         // Filter out not-chosen category
-  //         // const filteredResult = result.filter(
-  //         //   (item: Catergory) => item.chosen,
-  //         // );
-
-  //         // dispatch(categoriesActions.update(result));
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   // Get data if is focused
-  //   getDataFromStorage();
-  // }, []);
+  useEffect(() => {
+    flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
+  }, [newsSource]);
 
   return (
     <View style={styles.listContainer}>

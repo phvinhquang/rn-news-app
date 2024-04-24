@@ -9,7 +9,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import {useCallback, useEffect} from 'react';
-import {Catergory, TT_CATEGORIES, VE_CATEGORIES} from '../constants/Categories';
+import {CategoryInterface} from '../constants/Categories';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
@@ -24,8 +24,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../store';
 import {Swipeable} from 'react-native-gesture-handler';
 import {categoriesActions} from '../store/categories-slice';
-import {NewsSource} from './Home';
 import {Colors} from '../constants/Color';
+import {Users} from '../utils/database';
 
 type ScreenProps = StackScreenProps<NativeStackParamsList, 'CategoriesSetting'>;
 
@@ -33,69 +33,39 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
   // const [data, setData] = useState<Catergory[]>(CATEGORIES);
   const data = useSelector<RootState>(
     state => state.categories.categories,
-  ) as Catergory[];
+  ) as CategoryInterface[];
   const newsSource = useSelector<RootState>(
     state => state.newsSource,
   ) as string;
-
   const userEmail = useSelector<RootState>(state => state.authentication.email);
   const {t} = useTranslation();
   const dispatch = useDispatch();
 
   let row: Array<any> = [];
 
-  const saveToStorage = async function (data: Catergory[]) {
+  // Save updated data to database
+  const saveToDb = async function (data: CategoryInterface[]) {
     try {
-      const dataFromStorage = await AsyncStorage.getItem(
-        `${userEmail}-categories`,
-      );
-      if (dataFromStorage) {
-        const parsedData = JSON.parse(dataFromStorage);
+      // Get data from database
+      const userInDb = await Users.get({email: userEmail});
+      const parsedCategories = JSON.parse(userInDb.categories);
 
-        // console.log(newsSource);
-        // console.log(parsedData);
+      // Update new categories data
+      parsedCategories[newsSource] = data;
 
-        // if (newsSource === NewsSource.VnExpress) {
-        //   parsedData.vnexpress = data;
-        // }
-        // if (newsSource === NewsSource.TuoiTre) {
-        //   parsedData.tuoitre = data;
-        // }
-
-        parsedData[newsSource] = data;
-
-        await AsyncStorage.setItem(
-          `${userEmail}-categories`,
-          JSON.stringify(parsedData),
-        );
-      }
-      //  else {
-      //   // console.log(data);
-
-      //   const dataToSave = {
-      //     vnexpress: newsSource === NewsSource.VnExpress ? data : null,
-      //     tuoitre: newsSource === NewsSource.TuoiTre ? data : null,
-      //   };
-      //   await AsyncStorage.setItem(
-      //     `${userEmail}-categories`,
-      //     JSON.stringify(dataToSave),
-      //   );
-      // }
-
-      // await AsyncStorage.setItem(
-      //   `${userEmail}-categories`,
-      //   JSON.stringify(data),
-      // );
+      await Users.update(userInDb.id, {
+        categories: JSON.stringify(parsedCategories),
+      });
     } catch (err) {
       console.log(err);
     }
   };
 
   // Drag End Handler
-  const dragEndHandler = function (data: Catergory[]) {
+  const dragEndHandler = function (data: CategoryInterface[]) {
     // setData(data);
     dispatch(categoriesActions.update(data));
-    saveToStorage(data);
+    saveToDb(data);
   };
 
   // Toggle option handler
@@ -107,41 +77,17 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
 
   // Save data to storage when category's shown/hidden
   useEffect(() => {
-    saveToStorage(data);
+    saveToDb(data);
   }, [data]);
 
-  // Get category order from storage
-  // useEffect(() => {
-  //   const getDataFromStorage = async function () {
-  //     try {
-  //       const dataFromStorage = await AsyncStorage.getItem(
-  //         `${userEmail}-categories`,
-  //       );
-  //       if (dataFromStorage && newsSource) {
-  //         const parsedData = JSON.parse(dataFromStorage);
-  //         if (newsSource === NewsSource.VnExpress) {
-  //           // setData(JSON.parse(data));
-  //           dispatch(categoriesActions.update(parsedData.vnexpress));
-  //         }
-  //         if (newsSource === NewsSource.TuoiTre) {
-  //           // setData(JSON.parse(data));
-  //           dispatch(categoriesActions.update(parsedData.tuoitre));
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   getDataFromStorage();
-  // }, []);
-
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 
   const renderItem = useCallback(
-    ({item, drag, isActive, getIndex}: RenderItemParams<Catergory>) => {
+    ({item, drag, isActive, getIndex}: RenderItemParams<CategoryInterface>) => {
       return (
         <Swipeable
           ref={ref => {
@@ -197,22 +143,18 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
         />
       </View>
 
-      {/* <Button
-        title="Clear"
-        onPress={async () =>
-          console.log(await AsyncStorage.removeItem(`${userEmail}-categories`))
-        }
-      />
       <Button
+        title="Clear"
+        onPress={async () => console.log(await AsyncStorage.clear())}
+      />
+      {/*<Button
         title="Get All Keys"
         onPress={async () => console.log(await AsyncStorage.getAllKeys())}
-      />
+      />*/}
       <Button
         title="Get Data"
-        onPress={async () =>
-          console.log(await AsyncStorage.getItem(`${userEmail}-categories`))
-        }
-      /> */}
+        onPress={async () => console.log(await AsyncStorage.getAllKeys())}
+      />
     </SafeAreaView>
   );
 }

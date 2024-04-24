@@ -14,6 +14,8 @@ import NotificatonIcon from '../../assets/notification.png';
 // Import Icons
 import Feather from 'react-native-vector-icons/Feather';
 import {Colors} from '../../constants/Color';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store';
 
 // IntrinsicAttributes & HomeHeaderProps;
 interface HeaderProps {
@@ -28,7 +30,10 @@ export default function HomeHeader({
   // const [showPopover, setShowPopover] = useState<boolean>(false);
   // const [title, setTitle] = useState<string>(NewsSource.VnExpress);
   const iconRef = useRef<Image>(null);
-  const theme = useColorScheme() ?? 'light';
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
 
   const getPositionHandler = function () {
     iconRef.current?.measure((x, y, width, height, pageX, pageY) => {

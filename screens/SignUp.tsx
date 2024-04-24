@@ -15,7 +15,7 @@ import {NativeStackParamsList} from '../navigators/Stack';
 type AuthenticationProps = StackScreenProps<NativeStackParamsList, 'SignUp'>;
 
 function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
-  const {width, height} = useWindowDimensions();
+  // const {width, height} = useWindowDimensions();
   const theme = useColorScheme() ?? 'light';
 
   // Sytle and theme

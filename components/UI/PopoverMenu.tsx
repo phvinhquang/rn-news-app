@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  ViewStyle,
-  Pressable,
-  useColorScheme,
-} from 'react-native';
+import {Text, View, StyleSheet, ViewStyle, Pressable} from 'react-native';
 import Icon from './Icon';
 
 import ShareIcon from '../../assets/share.png';
@@ -13,6 +6,8 @@ import BookmarkIcon from '../../assets/bookmark.png';
 import FilledBookmarkIcon from '../../assets/bottom-tab/bookmark.png';
 import {useTranslation} from 'react-i18next';
 import {Colors} from '../../constants/Color';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store';
 
 interface PopoverProps {
   style?: ViewStyle;
@@ -41,7 +36,9 @@ export default function PopoverMenu({
     }
   };
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 

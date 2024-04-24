@@ -9,6 +9,9 @@ const themeSlice = createSlice({
       if (state === 'light') return 'dark';
       else return 'light';
     },
+    set(state, action) {
+      return action.payload;
+    },
   },
 });
 

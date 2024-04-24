@@ -18,7 +18,7 @@ import {NativeStackParamsList} from '../../../navigators/Stack';
 import {BookmarkInterface} from '../../../screens/Bookmarks';
 import PopoverMenu from '../../UI/PopoverMenu';
 import ModalOverlay from '../../UI/ModalOverlay';
-import {Bookmarks, Seens} from '../../../utils/database';
+import {Bookmarks, Seens, News} from '../../../utils/database';
 import {useTranslation} from 'react-i18next';
 import BookmarkedIcon from '../../../assets/bottom-tab/bookmark.png';
 
@@ -61,7 +61,10 @@ export default function NewsOverviewItem({
   const timeAgo = new TimeAgo('en-US');
   const time = timeAgo.format(new Date(news.pubDate).getTime(), 'mini');
 
-  const theme = useColorScheme() ?? 'light';
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   // Show popover handler
@@ -73,20 +76,24 @@ export default function NewsOverviewItem({
   };
 
   // Save item to bookmark database
-  const bookmarkHandler = function () {
+  const bookmarkHandler = async function () {
     try {
-      const existingItem = Bookmarks.get({
+      const existingItem = await News.get({
         link: news?.link,
         userEmail: userEmail,
       });
-      if (existingItem) {
+      // If there's an item, already bookmarked
+      if (existingItem && existingItem.bookmarked) {
         Alert.alert(`${t('alreadyBookmarked')}`, `${t('seeBookmarkScreen')}`);
         setShowPopover(false);
         return;
+        // If there's an item, but not bookmarked
+      } else if (existingItem && !existingItem.bookmarked) {
+        await News.update(existingItem.id, {bookmarked: true});
       }
 
       // Save item to bookmark database
-      Bookmarks.insert(
+      News.insert(
         {
           title: news?.title,
           link: news?.link,
@@ -95,6 +102,8 @@ export default function NewsOverviewItem({
           pubDate: news?.pubDate,
           thumbnail: news?.thumbnail,
           userEmail: userEmail,
+          viewedAt: Date.now(),
+          bookmarked: true,
         },
         true,
       );
@@ -107,7 +116,9 @@ export default function NewsOverviewItem({
 
   // Remove bookmark handler
   const removeBookmarkHandler = async function () {
-    await Bookmarks.remove({link: news?.link}, true);
+    const existingNews = News.get({link: news?.link});
+
+    await News.update(existingNews.id, {bookmarked: false});
 
     setShowPopover(false);
   };
@@ -131,8 +142,8 @@ export default function NewsOverviewItem({
   useEffect(() => {
     // console.log('item', (news as Overview).bookmarked);
 
-    Bookmarks.onChange(async () => {
-      const isBookmarked = await Bookmarks.get({link: news.link});
+    News.onChange(async () => {
+      const isBookmarked = await News.get({link: news.link});
       if (isBookmarked) {
         setBookmarked(true);
       } else {

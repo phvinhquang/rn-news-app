@@ -7,7 +7,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
-import {Seens} from '../utils/database';
+import {Bookmarks, Seens} from '../utils/database';
 import {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import type {BookmarkInterface} from './Bookmarks';
@@ -55,7 +55,9 @@ export default function SeenScreen(): React.JSX.Element {
     });
   }, [newsSource]);
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
   return (
@@ -67,7 +69,11 @@ export default function SeenScreen(): React.JSX.Element {
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
 
       {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />*/}
-      {/* <Button title="Clear DB" onPress={() => Seens.removeAllRecords()} /> */}
+      <Button title="Clear Seens" onPress={() => Seens.removeAllRecords()} />
+      <Button
+        title="Clear Bookmarks"
+        onPress={() => Bookmarks.removeAllRecords()}
+      />
 
       <NewsOverviewList data={data} onRefresh={() => {}} isLoading={false} />
     </SafeAreaView>

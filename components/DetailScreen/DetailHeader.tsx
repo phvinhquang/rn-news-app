@@ -105,7 +105,9 @@ export default function DetailHeader({news}: HeaderProps) {
     }
   };
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 

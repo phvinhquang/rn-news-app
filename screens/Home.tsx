@@ -7,11 +7,12 @@ import {
   Text,
   Button,
   GestureResponderEvent,
+  Appearance,
 } from 'react-native';
 import Categories from '../components/HomeScreen/Categories/Categories';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
 import {Colors} from '../constants/Color';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {fetchAndParseRss} from '../utils/rssHandler';
 import {
   CategoryInterface,
@@ -27,7 +28,8 @@ import {categoriesActions} from '../store/categories-slice';
 import {RootState} from '../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {Bookmarks} from '../utils/database';
+import {Bookmarks, Users} from '../utils/database';
+import {themeActions} from '../store/theme-slice';
 
 export interface Overview {
   title: string;
@@ -50,13 +52,9 @@ export enum NewsSource {
 
 export default function HomeScreen(): React.JSX.Element {
   const [title, setTitle] = useState<string>(NewsSource.VnExpress);
-  // const [newsSource, setNewsSource] = useState<string>(NewsSource.VnExpress);
   const newsSource = useSelector<RootState>(
     state => state.newsSource,
   ) as string;
-  // const [chosenCategory, setChosenCategory] = useState<CategoryInterface>(
-  //   VE_CATEGORIES[0],
-  // );
   const chosenCategory = useSelector<RootState>(
     state => state.categories.currentCategory,
   ) as CategoryInterface;
@@ -67,12 +65,17 @@ export default function HomeScreen(): React.JSX.Element {
     x: 0,
     y: 0,
   });
-  const userEmail = useSelector<RootState>(state => state.authentication.email);
+  const userEmail = useSelector<RootState>(
+    state => state.authentication.email,
+  ) as string;
   const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
 
-  const theme = useColorScheme() ?? 'light';
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   // Change category handler
@@ -90,6 +93,7 @@ export default function HomeScreen(): React.JSX.Element {
         newsSource,
         chosenCategory.url,
         chosenCategory.name,
+        userEmail,
       );
 
       setOverviews(res);
@@ -111,6 +115,7 @@ export default function HomeScreen(): React.JSX.Element {
         newsSource,
         chosenCategory.url,
         chosenCategory.name,
+        userEmail,
       );
 
       setOverviews(res);
@@ -127,112 +132,136 @@ export default function HomeScreen(): React.JSX.Element {
     setShowSourcePopover(true);
   };
 
-  // Save news source to storage
-  const saveToStorage = async function (source: string) {
-    try {
-      await AsyncStorage.setItem(`${userEmail}-news-source`, source);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // Change news source handler
   const changeNewsSourceHandler = async function (
     e: GestureResponderEvent,
     source: string,
   ) {
-    const dataFromStorage = await AsyncStorage.getItem(
-      `${userEmail}-categories`,
+    const userInDb = await Users.get({email: userEmail});
+    const parsedCategories = JSON.parse(userInDb.categories);
+    // Set new catgories
+    const categories = parsedCategories[source];
+    const chosenCategory = categories.find(
+      (cat: CategoryInterface) => cat.chosen,
     );
-    if (dataFromStorage) {
-      const parsedData = JSON.parse(dataFromStorage);
-      if (source === NewsSource.VnExpress) {
-        const chosenCategory = parsedData.vnexpress.find(
-          (cat: CategoryInterface) => cat.chosen,
-        );
-        dispatch(categoriesActions.update(parsedData.vnexpress));
-        dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
-        fetchData(source, chosenCategory);
-      }
-
-      if (source === NewsSource.TuoiTre) {
-        const chosenCategory = parsedData.tuoitre.find(
-          (cat: CategoryInterface) => cat.chosen,
-        );
-        dispatch(categoriesActions.update(parsedData.tuoitre));
-        dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
-        fetchData(source, chosenCategory);
-      }
-    }
 
     setShowSourcePopover(false);
-    // setNewsSource(source);
-    dispatch(newsSourceActions.change(source));
     setTitle(source);
+    dispatch(newsSourceActions.change(source));
+    dispatch(categoriesActions.update(categories));
+    dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
+    fetchData(source, chosenCategory);
 
-    saveToStorage(source);
+    //Save new news source to database
+    await Users.update(userInDb.id, {newsSource: source});
   };
 
   // Fetch news on initial load
+  // useEffect(() => {
+  //   console.log('running ');
+  //   // Load news source from storage if true
+  //   const getDataFromStorage = async function () {
+  //     try {
+  //       const newsSource =
+  //         (await AsyncStorage.getItem(`${userEmail}-news-source`)) ??
+  //         NewsSource.VnExpress;
+  //       const categoriesInStorage = await AsyncStorage.getItem(
+  //         `${userEmail}-categories`,
+  //       );
+  //       // Set news source
+  //       if (newsSource) {
+  //         dispatch(newsSourceActions.change(newsSource));
+  //         setTitle(newsSource);
+  //       }
+
+  //       // Set categories
+  //       if (categoriesInStorage) {
+  //         const parsedData = JSON.parse(categoriesInStorage);
+  //         const categories = parsedData[newsSource as string];
+
+  //         const firstCategory = categories.find(
+  //           (cat: CategoryInterface) => cat.chosen,
+  //         );
+  //         dispatch(categoriesActions.update(categories));
+  //         dispatch(categoriesActions.changeCurrentCategory(firstCategory));
+  //         fetchData(newsSource as string, firstCategory);
+  //       } else {
+  //         const categories =
+  //           newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES;
+  //         const firstCategory = categories.find(
+  //           (cat: CategoryInterface) => cat.chosen,
+  //         );
+  //         dispatch(categoriesActions.update(categories));
+  //         dispatch(categoriesActions.changeCurrentCategory(firstCategory));
+  //         fetchData(newsSource as string, firstCategory as CategoryInterface);
+
+  //         await AsyncStorage.setItem(
+  //           `${userEmail}-categories`,
+  //           JSON.stringify({
+  //             vnexpress: VE_CATEGORIES,
+  //             tuoitre: TT_CATEGORIES,
+  //           }),
+  //         );
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+
+  //   getDataFromStorage();
+
+  //   Bookmarks.onChange(() => {
+  //     console.log('on change');
+  //   });
+  // }, []);
+
+  // Check database for current user
+  // If true, load all settings
+  // If false, create new default settings and save to database
   useEffect(() => {
-    console.log('running ');
-    // Load news source from storage if true
-    const getDataFromStorage = async function () {
-      try {
-        const newsSource =
-          (await AsyncStorage.getItem(`${userEmail}-news-source`)) ??
-          NewsSource.VnExpress;
-        const categoriesInStorage = await AsyncStorage.getItem(
-          `${userEmail}-categories`,
+    const getUserFromDb = async function () {
+      const userInDb = await Users.find({email: userEmail});
+
+      if (userInDb) {
+        // console.log('user in db', userInDb);
+        // console.log('categories here', JSON.parse(userInDb.categories));
+        const userNewsSource = userInDb.newsSource;
+        const parsedCategories = JSON.parse(userInDb.categories);
+        const categories = parsedCategories[userNewsSource];
+
+        const chosenCategory = categories.find(
+          (cat: CategoryInterface) => cat.chosen,
         );
-        // Set news source
-        if (newsSource) {
-          dispatch(newsSourceActions.change(newsSource));
-          setTitle(newsSource);
-        }
 
-        // Set categories
-        if (categoriesInStorage) {
-          const parsedData = JSON.parse(categoriesInStorage);
-          const categories = parsedData[newsSource as string];
+        setTitle(userNewsSource);
+        dispatch(newsSourceActions.change(userNewsSource));
+        dispatch(categoriesActions.update(categories));
+        dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
+        fetchData(userNewsSource, chosenCategory);
+      } else {
+        // Create new default settings and save to database
+        const defaultCategories = {
+          vnexpress: VE_CATEGORIES,
+          tuoitre: TT_CATEGORIES,
+        };
 
-          const firstCategory = categories.find(
-            (cat: CategoryInterface) => cat.chosen,
-          );
-          dispatch(categoriesActions.update(categories));
-          dispatch(categoriesActions.changeCurrentCategory(firstCategory));
-          fetchData(newsSource as string, firstCategory);
-        } else {
-          const categories =
-            newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES;
-          const firstCategory = categories.find(
-            (cat: CategoryInterface) => cat.chosen,
-          );
-          dispatch(categoriesActions.update(categories));
-          dispatch(categoriesActions.changeCurrentCategory(firstCategory));
-          fetchData(newsSource as string, firstCategory as CategoryInterface);
+        await Users.insert({
+          email: userEmail,
+          newsSource: NewsSource.VnExpress,
+          categories: JSON.stringify(defaultCategories),
+          language: 'en',
+          theme: theme,
+        });
 
-          await AsyncStorage.setItem(
-            `${userEmail}-categories`,
-            JSON.stringify({
-              vnexpress: VE_CATEGORIES,
-              tuoitre: TT_CATEGORIES,
-            }),
-          );
-        }
-      } catch (err) {
-        console.log(err);
+        // Fetch news with default setting
+        fetchData(newsSource, chosenCategory);
       }
     };
 
-    getDataFromStorage();
-
-    Bookmarks.onChange(() => {
-      console.log('on change');
-    });
+    getUserFromDb();
   }, []);
 
-  // Set bookmarked false
+  // Set bookmarked status when database changed
   useEffect(() => {
     if (isFocused) {
       Promise.all(
@@ -252,6 +281,25 @@ export default function HomeScreen(): React.JSX.Element {
     }
   }, [isFocused]);
 
+  useLayoutEffect(() => {
+    const getThemeFromDb = async function () {
+      try {
+        const user = await Users.get({email: userEmail});
+        if (user) {
+          const theme = user.theme;
+          // console.log('user theme', theme);
+
+          dispatch(themeActions.set(theme));
+          // Appearance.setColorScheme(theme);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getThemeFromDb();
+  }, []);
+
   return (
     <>
       <Pressable style={{flex: 1}}>
@@ -268,26 +316,11 @@ export default function HomeScreen(): React.JSX.Element {
           />
           {/* <Button
             title="Clear"
-            onPress={async () =>
-              console.log(
-                await AsyncStorage.removeItem(`${userEmail}-categories`),
-              )
-            }
-          />
-      
+            onPress={async () => await Users.removeAllRecords()}
+          /> 
           <Button
-            title="Clear News Source"
-            onPress={async () =>
-              console.log(
-                await AsyncStorage.removeItem(`${userEmail}-news-source`),
-              )
-            }
-          />
-          <Button
-            title="Categories"
-            onPress={async () =>
-              console.log(await AsyncStorage.getItem(`${userEmail}-categories`))
-            }
+            title="Get DB"
+            onPress={async () => console.log(await Users.data())}
           />*/}
 
           {/* Articles list */}

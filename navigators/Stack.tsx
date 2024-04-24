@@ -29,6 +29,7 @@ import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors} from '../constants/Color';
 import ForgotPassword from '../screens/ForgotPassword';
+import {Bookmarks, Users} from '../utils/database';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -58,10 +59,10 @@ export default function StackNavigator() {
   const auth = getAuth(app);
 
   // Get language from storage
-  const getLanguageFromStorage = async function () {
+  const getLanguageFromDb = async function (email: string) {
     try {
-      const language = await AsyncStorage.getItem('language');
-      if (language) i18n.changeLanguage(language);
+      const user = await Users.get({email: email});
+      if (user) i18n.changeLanguage(user.language);
     } catch (err) {
       console.log(err);
     }
@@ -74,11 +75,18 @@ export default function StackNavigator() {
         data.getIdToken().then(token => {
           dispatch(authActions.login({token: token, email: data.email}));
         });
+
+        getLanguageFromDb(data.email!);
       }
+
       setIsLoading(false);
     });
 
-    getLanguageFromStorage();
+    Bookmarks.onChange(() => {
+      console.log('on change');
+    });
+
+    // getLanguageFromStorage();
   }, [auth]);
 
   useLayoutEffect(() => {
@@ -93,7 +101,7 @@ export default function StackNavigator() {
       }
     };
 
-    getThemeFromStorage();
+    // getThemeFromStorage();
   }, []);
 
   const activeColor = Colors[theme as keyof typeof Colors];

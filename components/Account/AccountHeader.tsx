@@ -15,6 +15,8 @@ import {useTranslation} from 'react-i18next';
 import Icon from '../UI/Icon';
 import BackIcon from '../../assets/back.png';
 import {Colors} from '../../constants/Color';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
@@ -31,7 +33,9 @@ export default function AccountHeader({
   const {t} = useTranslation();
   const navigation = useNavigation<NavigationProps>();
 
-  const theme = useColorScheme() as keyof typeof Colors;
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
   const styles = customStyle(activeColor);
 
