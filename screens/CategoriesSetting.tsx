@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Pressable,
   Button,
-  useColorScheme,
 } from 'react-native';
 import {useCallback, useEffect} from 'react';
 import {CategoryInterface} from '../constants/Categories';
@@ -16,16 +15,16 @@ import DraggableFlatList, {
 import {useTranslation} from 'react-i18next';
 import {StackScreenProps} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../navigators/Stack';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from '../components/UI/Icon';
-import BackBtn from '../assets/back.png';
-import ChosenIcon from '../assets/settings/have-chosen-16.png';
 import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../store';
 import {Swipeable} from 'react-native-gesture-handler';
 import {categoriesActions} from '../store/categories-slice';
 import {Colors} from '../constants/Color';
 import {Users} from '../utils/database';
+
+import BackBtn from '../assets/back.png';
+import ChosenIcon from '../assets/settings/have-chosen-16.png';
 
 type ScreenProps = StackScreenProps<NativeStackParamsList, 'CategoriesSetting'>;
 
@@ -140,21 +139,22 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
           renderItem={renderItem}
           keyExtractor={item => `draggable-item-${item.name}`}
           onDragEnd={({data}) => dragEndHandler(data)}
+          style={{paddingHorizontal: 20}}
         />
       </View>
-
+      {/* 
       <Button
         title="Clear"
         onPress={async () => console.log(await AsyncStorage.clear())}
-      />
-      {/*<Button
+      /> */}
+      {/* <Button
         title="Get All Keys"
         onPress={async () => console.log(await AsyncStorage.getAllKeys())}
-      />*/}
-      <Button
+      /> */}
+      {/* <Button
         title="Get Data"
         onPress={async () => console.log(await AsyncStorage.getAllKeys())}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
@@ -162,8 +162,8 @@ export default function CategoriesSetting({navigation}: ScreenProps) {
 const customStyle = (activeColor: any) =>
   StyleSheet.create({
     listContainer: {
-      paddingHorizontal: '5%',
-      height: '80%',
+      paddingHorizontal: 5,
+      height: '95%',
     },
     option: {
       alignItems: 'center',

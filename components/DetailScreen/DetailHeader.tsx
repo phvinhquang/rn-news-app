@@ -10,7 +10,7 @@ import {
 import BottomTabIcon from '../UI/Icon';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Bookmarks} from '../../utils/database';
+import {Bookmarks, News} from '../../utils/database';
 import {NativeStackParamsList} from '../../navigators/Stack';
 import {Overview} from '../../screens/Home';
 import {useLayoutEffect, useState} from 'react';
@@ -39,14 +39,25 @@ export default function DetailHeader({news}: HeaderProps) {
   const userEmail = useSelector<RootState>(state => state.authentication.email);
 
   useLayoutEffect(() => {
-    const existingItem = Bookmarks.get({
-      link: news?.link,
-      userEmail: userEmail,
-    });
+    // console.log('layout effect');
 
-    if (existingItem) {
-      setBookmarked(true);
-    }
+    const checkBookmark = async function () {
+      const existingItem = await News.get({
+        link: news?.link,
+        userEmail: userEmail,
+      });
+
+      if (
+        existingItem &&
+        (existingItem.bookmarked === 1 || existingItem.bookmarked)
+      ) {
+        console.log('here');
+
+        setBookmarked(true);
+      }
+    };
+
+    checkBookmark();
   }, []);
 
   // Go back handler
@@ -64,20 +75,31 @@ export default function DetailHeader({news}: HeaderProps) {
   };
 
   // Add Bookmark handler
-  const addBookmarkHandler = function () {
-    // Save item to bookmark database
-    Bookmarks.insert(
-      {
-        title: news?.title,
-        link: news?.link,
-        author: news?.author,
-        category: news?.category,
-        pubDate: news?.pubDate,
-        thumbnail: news?.thumbnail,
-        userEmail: userEmail,
-      },
-      true,
-    );
+  const addBookmarkHandler = async function () {
+    // Check existing item in database
+    const existingItem = await News.get({
+      link: news?.link,
+      userEmail: userEmail,
+    });
+
+    if (existingItem) {
+      await News.update(existingItem.id, {bookmarked: true});
+    } else {
+      await News.insert(
+        {
+          title: news?.title,
+          link: news?.link,
+          author: news?.author,
+          category: news?.category,
+          pubDate: news?.pubDate,
+          thumbnail: news?.thumbnail,
+          userEmail: userEmail,
+          viewedAt: 0,
+          bookmarked: true,
+        },
+        true,
+      );
+    }
 
     setBookmarked(true);
     // Bookmarks.removeAllRecords();
@@ -85,7 +107,11 @@ export default function DetailHeader({news}: HeaderProps) {
 
   const removeBookmarkHandler = async function () {
     try {
-      await Bookmarks.remove({link: news?.link, userEmail: userEmail}, true);
+      // await Bookmarks.remove({link: news?.link, userEmail: userEmail}, true);
+
+      const existingNews = News.get({link: news?.link});
+
+      await News.update(existingNews.id, {bookmarked: false});
 
       setBookmarked(false);
     } catch (err) {
@@ -96,10 +122,14 @@ export default function DetailHeader({news}: HeaderProps) {
   // Share handler
   const shareHandler = async function () {
     try {
-      await Share.share({
-        // message: 'Something',
-        url: news.link,
-      });
+      await Share.share(
+        {
+          message: news.title,
+          title: 'HEllo',
+          url: news.link,
+        },
+        {dialogTitle: 'hello'},
+      );
     } catch (err: any) {
       Alert.alert(err.message);
     }

@@ -204,7 +204,7 @@ const customStyle = (activeColor: any) =>
     },
     forgotPassword: {
       alignSelf: 'flex-end',
-      marginTop: '5%',
+      marginTop: '4%',
       color: activeColor.textPrimary,
     },
   });

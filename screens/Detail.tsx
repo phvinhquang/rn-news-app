@@ -4,7 +4,7 @@ import {SafeAreaView, useColorScheme} from 'react-native';
 import {NativeStackParamsList} from '../navigators/Stack';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useEffect} from 'react';
-import {Seens} from '../utils/database';
+import {Seens, News} from '../utils/database';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {Colors} from '../constants/Color';
@@ -19,28 +19,28 @@ export default function DetailScreen({route}: Props) {
 
     const addToSeen = async function () {
       // Check if news in the db already, if true, return
-      const existingNews = await Seens.get({
+      const existingNews = await News.get({
         link: news.link,
         userEmail: userEmail,
       });
       if (existingNews) {
         // Update viewedAt property of existing news
-        await Seens.update(existingNews.id, {viewedAt: Date.now()});
+        await News.update(existingNews.id, {viewedAt: Date.now()});
         return;
+      } else {
+        // Insert news to db
+        await News.insert({
+          title: news?.title,
+          link: news?.link,
+          author: news?.author,
+          category: news?.category,
+          pubDate: news?.pubDate,
+          thumbnail: news?.thumbnail,
+          userEmail: userEmail,
+          viewedAt: Date.now(),
+          bookmarked: false,
+        });
       }
-
-      // Insert news to db
-      await Seens.insert({
-        title: news?.title,
-        link: news?.link,
-        author: news?.author,
-        category: news?.category,
-        pubDate: news?.pubDate,
-        thumbnail: news?.thumbnail,
-        userEmail: userEmail,
-        viewedAt: Date.now(),
-        bookmarked: false,
-      });
     };
 
     addToSeen();

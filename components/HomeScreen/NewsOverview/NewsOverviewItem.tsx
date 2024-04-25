@@ -90,23 +90,24 @@ export default function NewsOverviewItem({
         // If there's an item, but not bookmarked
       } else if (existingItem && !existingItem.bookmarked) {
         await News.update(existingItem.id, {bookmarked: true});
+      } else if (!existingItem) {
+        // Save item to bookmark database
+        News.insert(
+          {
+            title: news?.title,
+            link: news?.link,
+            author: news?.author,
+            category: news?.category,
+            pubDate: news?.pubDate,
+            thumbnail: news?.thumbnail,
+            userEmail: userEmail,
+            viewedAt: 0,
+            bookmarked: true,
+          },
+          true,
+        );
       }
 
-      // Save item to bookmark database
-      News.insert(
-        {
-          title: news?.title,
-          link: news?.link,
-          author: news?.author,
-          category: news?.category,
-          pubDate: news?.pubDate,
-          thumbnail: news?.thumbnail,
-          userEmail: userEmail,
-          viewedAt: Date.now(),
-          bookmarked: true,
-        },
-        true,
-      );
       // Bookmarks.removeAllRecords();
 
       // Close popover menu
@@ -117,6 +118,7 @@ export default function NewsOverviewItem({
   // Remove bookmark handler
   const removeBookmarkHandler = async function () {
     const existingNews = News.get({link: news?.link});
+    // console.log(existingNews);
 
     await News.update(existingNews.id, {bookmarked: false});
 
@@ -143,8 +145,15 @@ export default function NewsOverviewItem({
     // console.log('item', (news as Overview).bookmarked);
 
     News.onChange(async () => {
-      const isBookmarked = await News.get({link: news.link});
-      if (isBookmarked) {
+      // console.log('on change in item');
+
+      const existingItem = await News.get({link: news.link});
+      if (
+        existingItem &&
+        (existingItem.bookmarked === 1 || existingItem.bookmarked)
+      ) {
+        // console.log('in item', isBookmarked);
+
         setBookmarked(true);
       } else {
         setBookmarked(false);
@@ -175,7 +184,7 @@ export default function NewsOverviewItem({
           <Text style={[styles.author, styles.greyText]}>
             {t('by')} {news.author}
           </Text>
-          {bookmarked && !bookmarkScreen && (
+          {Boolean(bookmarked) && !bookmarkScreen && (
             <Icon source={BookmarkedIcon} style={{width: 18, height: 18}} />
           )}
         </View>
@@ -297,8 +306,6 @@ const styles = StyleSheet.create({
   threedots: {
     width: 25,
     height: 25,
-    // marginRight: 15,
-    // position: 'relative',
   },
 
   modal: {

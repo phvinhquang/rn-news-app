@@ -29,7 +29,7 @@ import {Overview} from '../screens/Home';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors} from '../constants/Color';
 import ForgotPassword from '../screens/ForgotPassword';
-import {Bookmarks, Users} from '../utils/database';
+import {Bookmarks, News, Users} from '../utils/database';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -82,27 +82,27 @@ export default function StackNavigator() {
       setIsLoading(false);
     });
 
-    Bookmarks.onChange(() => {
-      console.log('on change');
+    News.onChange(() => {
+      console.log('on changeee');
     });
 
     // getLanguageFromStorage();
   }, [auth]);
 
-  useLayoutEffect(() => {
-    const getThemeFromStorage = async function () {
-      try {
-        const themeFromStorage = await AsyncStorage.getItem('theme');
-        if (themeFromStorage) {
-          Appearance.setColorScheme(themeFromStorage as ColorSchemeName);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  // useLayoutEffect(() => {
+  //   const getThemeFromStorage = async function () {
+  //     try {
+  //       const themeFromStorage = await AsyncStorage.getItem('theme');
+  //       if (themeFromStorage) {
+  //         Appearance.setColorScheme(themeFromStorage as ColorSchemeName);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    // getThemeFromStorage();
-  }, []);
+  //   // getThemeFromStorage();
+  // }, []);
 
   const activeColor = Colors[theme as keyof typeof Colors];
 

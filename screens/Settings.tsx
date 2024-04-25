@@ -5,24 +5,17 @@ import {
   Text,
   View,
   Switch,
-  Appearance,
-  useColorScheme,
   Button,
 } from 'react-native';
 import {signOutAPI} from '../utils/api';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {BottomTabsParamsList} from '../navigators/BottomTabs';
 import {useLayoutEffect, useState} from 'react';
 
 // Icon
-import ProfileIcon from '../assets/settings/profile.png';
 import AccountIcon from '../assets/settings/account.png';
 import InterestIcon from '../assets/settings/interests.png';
-import NotificationIcon from '../assets/settings/notifications.png';
 import DarkModeIcon from '../assets/settings/darkmode.png';
-import QuestionMarkIcon from '../assets/settings/questionmark.png';
 import LogOutIcon from '../assets/settings/logout.png';
 import LanguageIcon from '../assets/settings/change_language.png';
 import ArrowRight from '../assets/settings/arrow_right.png';
@@ -97,25 +90,7 @@ export default function SettingsScreen(): React.JSX.Element {
         <Text style={styles.title}>{t('settings')}</Text>
       </View>
 
-      {/* <Text style={{marginLeft: '5%', color: activeColor.textPrimary}}>
-        {userEmail}
-      </Text> */}
-
       <View style={styles.contentContainer}>
-        {/* <View>
-          <View style={styles.optionContainer}>
-            <View style={styles.innerOptionContainer}>
-              <Icon source={ProfileIcon} style={{width: 20, height: 20}} />
-              <Text style={styles.optionText}>{t('profile')}</Text>
-            </View>
-            <Icon
-              source={ArrowRight}
-              style={{width: 22, height: 22, marginRight: 10}}
-            />
-          </View>
-          <View style={styles.bottomLine}></View>
-        </View> */}
-
         <View>
           <TouchableOpacity
             style={styles.optionContainer}
@@ -148,20 +123,6 @@ export default function SettingsScreen(): React.JSX.Element {
           <View style={styles.bottomLine}></View>
         </View>
 
-        {/* <View>
-          <View style={styles.optionContainer}>
-            <View style={styles.innerOptionContainer}>
-              <Icon source={NotificationIcon} style={{width: 20, height: 20}} />
-              <Text style={styles.optionText}>{t('notifications')}</Text>
-            </View>
-            <Icon
-              source={ArrowRight}
-              style={{width: 22, height: 22, marginRight: 10}}
-            />
-          </View>
-          <View style={styles.bottomLine}></View>
-        </View> */}
-
         <View>
           <View style={styles.optionContainer}>
             <View style={styles.innerOptionContainer}>
@@ -183,34 +144,6 @@ export default function SettingsScreen(): React.JSX.Element {
           </View>
           <View style={styles.bottomLine}></View>
         </View>
-
-        {/* <View>
-          <View style={styles.optionContainer}>
-            <View style={styles.innerOptionContainer}>
-              <Icon source={QuestionMarkIcon} style={{width: 20, height: 20}} />
-              <Text style={styles.optionText}>{t('terms')}</Text>
-            </View>
-            <Icon
-              source={ArrowRight}
-              style={{width: 22, height: 22, marginRight: 10}}
-            />
-          </View>
-          <View style={styles.bottomLine}></View>
-        </View> */}
-
-        {/* <View>
-          <View style={styles.optionContainer}>
-            <View style={styles.innerOptionContainer}>
-              <Icon source={AccountIcon} style={{width: 20, height: 20}} />
-              <Text style={styles.optionText}>{t('about')}</Text>
-            </View>
-            <Icon
-              source={ArrowRight}
-              style={{width: 22, height: 22, marginRight: 10}}
-            />
-          </View>
-          <View style={styles.bottomLine}></View>
-        </View> */}
 
         <View>
           <TouchableOpacity

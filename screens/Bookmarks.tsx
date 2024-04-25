@@ -25,6 +25,8 @@ export interface BookmarkInterface {
   pubDate: string;
   thumbnail: string;
   userEmail: string;
+  viewedAt: number;
+  bookmarked: boolean;
 }
 
 export default function BookmarksScreen(): React.JSX.Element {
@@ -38,18 +40,20 @@ export default function BookmarksScreen(): React.JSX.Element {
       newsSource === NewsSource.VnExpress ? 'VnExpress' : 'Tuoi Tre';
     const data = await News.data().filter(
       (item: BookmarkInterface) =>
-        item.userEmail === userEmail && item.author === source,
+        item.userEmail === userEmail &&
+        item.author === source &&
+        item.bookmarked,
     );
 
     setData(data);
   };
 
   useEffect(() => {
-    Bookmarks.onLoaded(() => {
+    News.onLoaded(() => {
       getData();
     });
 
-    Bookmarks.onChange(() => {
+    News.onChange(() => {
       getData();
     });
 
@@ -80,14 +84,16 @@ export default function BookmarksScreen(): React.JSX.Element {
       </View>
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
-      {/* <Button title="Get DB" onPress={() => console.log(Bookmarks.data())} /> */}
+      <Button
+        title="Get DB"
+        onPress={async () => console.log(await News.data())}
+      />
+      <Button title="Clear DB" onPress={() => News.removeAllRecords()} />
 
       <NewsOverviewList
         bookmarkScreen={true}
         data={data}
         onRefresh={() => {}}
-        // onShowPopover={showPopoverHandler}
-        // onRemoveBookmark={removeBookmarkHandler}
         isLoading={false}
       />
     </SafeAreaView>

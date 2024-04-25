@@ -7,7 +7,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
-import {Bookmarks, Seens} from '../utils/database';
+import {Bookmarks, Seens, News} from '../utils/database';
 import {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import type {BookmarkInterface} from './Bookmarks';
@@ -16,12 +16,12 @@ import {useTranslation} from 'react-i18next';
 import {NewsSource} from './Home';
 import {Colors} from '../constants/Color';
 
-interface SeenInterface extends BookmarkInterface {
-  viewedAt: Object;
-}
+// interface SeenInterface extends BookmarkInterface {
+//   viewedAt: Object;
+// }
 
 export default function SeenScreen(): React.JSX.Element {
-  const [data, setData] = useState<SeenInterface[]>([]);
+  const [data, setData] = useState<BookmarkInterface[]>([]);
   const userEmail = useSelector<RootState>(state => state.authentication.email);
   const newsSource = useSelector<RootState>(state => state.newsSource);
 
@@ -31,26 +31,30 @@ export default function SeenScreen(): React.JSX.Element {
     const source =
       newsSource === NewsSource.VnExpress ? 'VnExpress' : 'Tuoi Tre';
 
-    const data = await Seens.data().filter(
-      (item: SeenInterface) =>
-        item.userEmail === userEmail && item.author === source,
+    const data = await News.data().filter(
+      (item: BookmarkInterface) =>
+        item.userEmail === userEmail &&
+        item.author === source &&
+        item.viewedAt > 0,
     );
 
     // Sort data based on viewed-at time
     data.sort(
-      (a: SeenInterface, b: SeenInterface) =>
+      (a: BookmarkInterface, b: BookmarkInterface) =>
         (b.viewedAt as any) - (a.viewedAt as any),
     );
     // data.reverse();
+
+    // console.log(data);
 
     setData(data);
   };
 
   useEffect(() => {
-    Seens.onLoaded(() => {
+    News.onLoaded(() => {
       getData();
     });
-    Seens.onChange(() => {
+    News.onChange(() => {
       getData();
     });
   }, [newsSource]);
@@ -69,11 +73,11 @@ export default function SeenScreen(): React.JSX.Element {
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
 
       {/* <Button title="Get DB" onPress={() => console.log(Seens.data())} />*/}
-      <Button title="Clear Seens" onPress={() => Seens.removeAllRecords()} />
+      {/* <Button title="Clear Seens" onPress={() => Seens.removeAllRecords()} />
       <Button
         title="Clear Bookmarks"
         onPress={() => Bookmarks.removeAllRecords()}
-      />
+      /> */}
 
       <NewsOverviewList data={data} onRefresh={() => {}} isLoading={false} />
     </SafeAreaView>

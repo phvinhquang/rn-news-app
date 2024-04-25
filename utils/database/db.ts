@@ -35,7 +35,7 @@ const SeenSchema = {
     thumbnail: 'string',
     userEmail: 'string',
     viewedAt: 'number',
-    bookmarked: 'bolean',
+    bookmarked: 'boolean',
   },
 };
 
@@ -50,7 +50,7 @@ const NewsSchema = {
     thumbnail: 'string',
     userEmail: 'string',
     viewedAt: 'number',
-    bookmarked: 'bolean',
+    bookmarked: 'boolean',
   },
 };
 

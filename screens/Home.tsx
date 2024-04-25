@@ -1,7 +1,6 @@
 import {
   View,
   StyleSheet,
-  useColorScheme,
   Alert,
   Pressable,
   Text,
@@ -26,9 +25,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import {newsSourceActions} from '../store/news-source-slice';
 import {categoriesActions} from '../store/categories-slice';
 import {RootState} from '../store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {Bookmarks, Users} from '../utils/database';
+import {Bookmarks, Users, News} from '../utils/database';
 import {themeActions} from '../store/theme-slice';
 
 export interface Overview {
@@ -84,11 +82,8 @@ export default function HomeScreen(): React.JSX.Element {
     chosenCategory: CategoryInterface,
   ) {
     setIsLoading(true);
-    // setChosenCategory(chosenCategory);
 
     try {
-      // console.log('here', chosenCategory.url);
-
       const res = await fetchAndParseRss(
         newsSource,
         chosenCategory.url,
@@ -156,65 +151,6 @@ export default function HomeScreen(): React.JSX.Element {
     await Users.update(userInDb.id, {newsSource: source});
   };
 
-  // Fetch news on initial load
-  // useEffect(() => {
-  //   console.log('running ');
-  //   // Load news source from storage if true
-  //   const getDataFromStorage = async function () {
-  //     try {
-  //       const newsSource =
-  //         (await AsyncStorage.getItem(`${userEmail}-news-source`)) ??
-  //         NewsSource.VnExpress;
-  //       const categoriesInStorage = await AsyncStorage.getItem(
-  //         `${userEmail}-categories`,
-  //       );
-  //       // Set news source
-  //       if (newsSource) {
-  //         dispatch(newsSourceActions.change(newsSource));
-  //         setTitle(newsSource);
-  //       }
-
-  //       // Set categories
-  //       if (categoriesInStorage) {
-  //         const parsedData = JSON.parse(categoriesInStorage);
-  //         const categories = parsedData[newsSource as string];
-
-  //         const firstCategory = categories.find(
-  //           (cat: CategoryInterface) => cat.chosen,
-  //         );
-  //         dispatch(categoriesActions.update(categories));
-  //         dispatch(categoriesActions.changeCurrentCategory(firstCategory));
-  //         fetchData(newsSource as string, firstCategory);
-  //       } else {
-  //         const categories =
-  //           newsSource === NewsSource.VnExpress ? VE_CATEGORIES : TT_CATEGORIES;
-  //         const firstCategory = categories.find(
-  //           (cat: CategoryInterface) => cat.chosen,
-  //         );
-  //         dispatch(categoriesActions.update(categories));
-  //         dispatch(categoriesActions.changeCurrentCategory(firstCategory));
-  //         fetchData(newsSource as string, firstCategory as CategoryInterface);
-
-  //         await AsyncStorage.setItem(
-  //           `${userEmail}-categories`,
-  //           JSON.stringify({
-  //             vnexpress: VE_CATEGORIES,
-  //             tuoitre: TT_CATEGORIES,
-  //           }),
-  //         );
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   getDataFromStorage();
-
-  //   Bookmarks.onChange(() => {
-  //     console.log('on change');
-  //   });
-  // }, []);
-
   // Check database for current user
   // If true, load all settings
   // If false, create new default settings and save to database
@@ -255,6 +191,10 @@ export default function HomeScreen(): React.JSX.Element {
 
         // Fetch news with default setting
         fetchData(newsSource, chosenCategory);
+
+        News.onChange(() => {
+          console.log('on change');
+        });
       }
     };
 
@@ -262,24 +202,34 @@ export default function HomeScreen(): React.JSX.Element {
   }, []);
 
   // Set bookmarked status when database changed
-  useEffect(() => {
-    if (isFocused) {
-      Promise.all(
-        overviews.map(async item => {
-          const isBookmarked = await Bookmarks.get({link: item.link});
-          if (isBookmarked) {
-            item.bookmarked = true;
-          } else {
-            item.bookmarked = false;
-          }
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     // console.log('focusing');
+  //     // console.log(overviews);
 
-          return item;
-        }),
-      ).then(updatedData => {
-        setOverviews(updatedData);
-      });
-    }
-  }, [isFocused]);
+  //     Promise.all(
+  //       overviews.map(async item => {
+  //         const isBookmarked = await News.get({
+  //           link: item.link,
+  //           bookmarked: true,
+  //         });
+  //         // console.log(isBookmarked);
+
+  //         if (isBookmarked) {
+  //           // console.log(283, isBookmarked);
+
+  //           item.bookmarked = true;
+  //         } else {
+  //           item.bookmarked = false;
+  //         }
+
+  //         return item;
+  //       }),
+  //     ).then(updatedData => {
+  //       setOverviews(updatedData);
+  //     });
+  //   }
+  // }, [isFocused]);
 
   useLayoutEffect(() => {
     const getThemeFromDb = async function () {
@@ -299,6 +249,8 @@ export default function HomeScreen(): React.JSX.Element {
 
     getThemeFromDb();
   }, []);
+
+  const styles = customStyle(activeColor);
 
   return (
     <>
@@ -326,7 +278,7 @@ export default function HomeScreen(): React.JSX.Element {
           {/* Articles list */}
           <NewsOverviewList
             data={overviews}
-            onRefresh={() => {}}
+            onRefresh={() => fetchData(newsSource, chosenCategory)}
             isLoading={isLoading}
           />
           {/* Change news source popover */}
@@ -373,39 +325,41 @@ export default function HomeScreen(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    flex: 1,
-  },
+const customStyle = (activeColor: any) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: 'white',
+      flex: 1,
+    },
 
-  sourcePopover: {
-    flex: 1,
-    justifyContent: 'space-between',
+    sourcePopover: {
+      flex: 1,
+      justifyContent: 'space-between',
 
-    width: 120,
-    height: 80,
-    marginRight: 20,
-    borderRadius: 10,
-    // Box shadow Android
-    elevation: 4,
-    // Box shadow IOS
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 2},
-    shadowRadius: 6,
-    shadowOpacity: 0.25,
-    backgroundColor: '#fff',
-  },
-  sourceOptions: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-  menuText: {
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  sourceHighlight: {
-    backgroundColor: '#e8e8e8',
-    borderRadius: 10,
-  },
-});
+      width: 120,
+      height: 80,
+      marginRight: 20,
+      borderRadius: 10,
+      // Box shadow Android
+      elevation: 4,
+      // Box shadow IOS
+      shadowColor: 'black',
+      shadowOffset: {width: 2, height: 2},
+      shadowRadius: 6,
+      shadowOpacity: 0.25,
+      backgroundColor: activeColor.primary,
+    },
+    sourceOptions: {
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+    },
+    menuText: {
+      fontWeight: '600',
+      fontSize: 16,
+      color: activeColor.textPrimary,
+    },
+    sourceHighlight: {
+      backgroundColor: activeColor.secondary,
+      borderRadius: 10,
+    },
+  });

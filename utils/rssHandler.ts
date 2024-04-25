@@ -1,6 +1,6 @@
 // import {vnexpressRssUrl, tuoiTreRssUrl} from '../constants/Rss_Url';
 import {NewsSource} from '../screens/Home';
-import {Bookmarks} from './database';
+import {Bookmarks, News} from './database';
 
 export const fetchAndParseRss = async (
   source: string,
@@ -8,9 +8,6 @@ export const fetchAndParseRss = async (
   category: string,
   userEmail: string,
 ) => {
-  // const domain =
-  //   source === NewsSource.VnExpress ? vnexpressRssUrl : tuoiTreRssUrl;
-
   try {
     // console.log('rss', source);
     // console.log('rss', enpoint);
@@ -54,9 +51,10 @@ export const fetchAndParseRss = async (
           }
 
           // console.log(imageUrl);
-          const isBookmarked = await Bookmarks.get({
+          const isBookmarked = await News.get({
             link: link,
             userEmail: userEmail,
+            bookmarked: true,
           });
           // if (isBookmarked) {
           //   console.log(link);
@@ -103,7 +101,11 @@ export const fetchAndParseRss = async (
             imageUrl = description[1];
           }
 
-          const isBookmarked = await Bookmarks.get({link: link});
+          const isBookmarked = await News.get({
+            link: link,
+            userEmail: userEmail,
+            bookmarked: true,
+          });
           // if (isBookmarked) {
           //   console.log('checking bookmark');
 

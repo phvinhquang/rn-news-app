@@ -18,13 +18,13 @@ function App(): React.JSX.Element {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={{
-          borderLeftWidth: 'none',
-          borderRadius: 50,
-          backgroundColor: activeColor.textPrimary,
-          position: 100,
-          height: 60,
-        }}
+        // style={{
+        //   borderLeftWidth: 'none',
+        //   borderRadius: 50,
+        //   backgroundColor: activeColor.textPrimary,
+        //   position: 100,
+        //   height: 60,
+        // }}
         text1Style={{display: 'none'}}
         text2Style={{
           fontSize: 16,
