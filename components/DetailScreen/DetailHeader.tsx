@@ -5,7 +5,6 @@ import {
   Pressable,
   Alert,
   useColorScheme,
-  Share,
 } from 'react-native';
 import BottomTabIcon from '../UI/Icon';
 import {useNavigation} from '@react-navigation/native';
@@ -15,7 +14,7 @@ import {NativeStackParamsList} from '../../navigators/Stack';
 import {Overview} from '../../screens/Home';
 import {useLayoutEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-// import Share from 'react-native-share';
+import Share from 'react-native-share';
 
 // Icon
 import BackBtn from '../../assets/back.png';
@@ -123,7 +122,7 @@ export default function DetailHeader({news}: HeaderProps) {
   // Share handler
   const shareHandler = async function () {
     try {
-      await Share.share({
+      await Share.open({
         // message: news.title,
         title: news.title,
         url: news.link,

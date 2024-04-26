@@ -30,7 +30,6 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../navigators/Stack';
 import {themeActions} from '../store/theme-slice';
 import {Colors} from '../constants/Color';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {News, Users} from '../utils/database';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
@@ -62,6 +61,7 @@ export default function SettingsScreen(): React.JSX.Element {
     Alert.alert(`${t('loggingOut')}`, `${t('areYouSure')}`, [
       {
         text: `${t('logOut')}`,
+        style: 'destructive',
         onPress: () => {
           signOutAPI().then(() => {
             dispatch(authActions.logout());
@@ -70,7 +70,7 @@ export default function SettingsScreen(): React.JSX.Element {
       },
       {
         text: `${t('cancel')}`,
-        style: 'destructive',
+        // style: 'destructive',
       },
     ]);
   };
@@ -178,10 +178,14 @@ export default function SettingsScreen(): React.JSX.Element {
         </View>
       </View>
 
-      <Button
+      {/* <Button
         title="Get Users"
         onPress={async () => console.log(await Users.data())}
       />
+      <Button
+        title="Clear Users"
+        onPress={async () => await Users.removeAllRecords()}
+      /> */}
     </SafeAreaView>
   );
 }

@@ -24,15 +24,15 @@ function AuthenticationScreen({route}: AuthenticationProps): React.JSX.Element {
   const styles = customStyle(activeColor);
 
   return (
-    <KeyboardAvoidingView style={{flex: 1}} behavior="height">
-      <SafeAreaView style={styles.container}>
-        <View style={styles.root}>
-          <AuthHeader />
-          <AuthForm signIn={false} />
-          <SignInOptions />
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+    // <KeyboardAvoidingView style={{flex: 1}} behavior="height">
+    <SafeAreaView style={styles.container}>
+      <View style={styles.root}>
+        <AuthHeader />
+        <AuthForm signIn={false} />
+        <SignInOptions />
+      </View>
+    </SafeAreaView>
+    // </KeyboardAvoidingView>
   );
 }
 

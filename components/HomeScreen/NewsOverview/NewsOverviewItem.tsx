@@ -7,7 +7,6 @@ import {
   useColorScheme,
   Pressable,
   Alert,
-  Share,
 } from 'react-native';
 import ThreeDots from '../../../assets/menu.png';
 import {Colors} from '../../../constants/Color';
@@ -21,6 +20,7 @@ import ModalOverlay from '../../UI/ModalOverlay';
 import {Bookmarks, Seens, News} from '../../../utils/database';
 import {useTranslation} from 'react-i18next';
 import BookmarkedIcon from '../../../assets/bottom-tab/bookmark.png';
+import Share from 'react-native-share';
 
 // Time Ago
 import TimeAgo from 'javascript-time-ago';
@@ -128,14 +128,14 @@ export default function NewsOverviewItem({
   // Share handler
   const shareHandler = async function () {
     try {
-      await Share.share({
+      await Share.open({
         // message: 'Something',
         url: news.link,
       });
 
       setShowPopover(false);
     } catch (err: any) {
-      Alert.alert(err.message);
+      console.log(err.message);
     }
   };
 

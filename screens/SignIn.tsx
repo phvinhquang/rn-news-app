@@ -22,15 +22,15 @@ function AuthenticationScreen(): React.JSX.Element {
   // }, [Appearance]);
 
   return (
-    <KeyboardAvoidingView style={{flex: 1}} behavior="height">
-      <SafeAreaView style={styles.container}>
-        <View style={styles.root}>
-          <AuthHeader />
-          <AuthForm signIn={true} />
-          <SignInOptions signIn={true} />
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+    // <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+    <SafeAreaView style={styles.container}>
+      <View style={styles.root}>
+        <AuthHeader />
+        <AuthForm signIn={true} />
+        <SignInOptions signIn={true} />
+      </View>
+    </SafeAreaView>
+    // </KeyboardAvoidingView>
   );
 }
 
@@ -49,15 +49,5 @@ const customStyle = (activeColor: any) =>
       backgroundColor: activeColor.primary,
     },
   });
-
-// const styles = StyleSheet.create({
-//   root: {
-//     paddingTop: '10%',
-//     paddingBottom: ' 5%',
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'flex-end',
-//   },
-// });
 
 export default AuthenticationScreen;

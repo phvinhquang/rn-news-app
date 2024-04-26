@@ -4,12 +4,7 @@ import BottomTabsNavigator from '../navigators/BottomTabs';
 import {getFirebaseApp} from '../utils/firebaseConfig';
 import {getAuth} from 'firebase/auth';
 import {useState, useEffect, useLayoutEffect} from 'react';
-import {
-  View,
-  ActivityIndicator,
-  Appearance,
-  ColorSchemeName,
-} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
 import CategoriesSetting from '../screens/CategoriesSetting';
@@ -19,17 +14,16 @@ import ChangePassword from '../screens/ChangePassword';
 import SignUp from '../screens/SignUp';
 import SignInScreen from '../screens/SignIn';
 import {useColorScheme} from 'react-native';
+import DetailScreen from '../screens/Detail';
+import {Overview} from '../screens/Home';
+import {Colors} from '../constants/Color';
+import ForgotPassword from '../screens/ForgotPassword';
+import {Bookmarks, News, Users} from '../utils/database';
 
 // Redux
 import {useSelector, useDispatch} from 'react-redux';
 import {authActions} from '../store/auth-slice';
 import {RootState} from '../store';
-import DetailScreen from '../screens/Detail';
-import {Overview} from '../screens/Home';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Colors} from '../constants/Color';
-import ForgotPassword from '../screens/ForgotPassword';
-import {Bookmarks, News, Users} from '../utils/database';
 
 export type NativeStackParamsList = {
   SignIn: undefined;
@@ -82,24 +76,9 @@ export default function StackNavigator() {
     });
 
     News.onChange(() => {
-      console.log('on changeee');
+      console.log('on change');
     });
   }, [auth]);
-
-  // useLayoutEffect(() => {
-  //   const getThemeFromStorage = async function () {
-  //     try {
-  //       const themeFromStorage = await AsyncStorage.getItem('theme');
-  //       if (themeFromStorage) {
-  //         Appearance.setColorScheme(themeFromStorage as ColorSchemeName);
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   // getThemeFromStorage();
-  // }, []);
 
   const activeColor = Colors[theme as keyof typeof Colors];
 

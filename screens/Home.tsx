@@ -49,7 +49,7 @@ export enum NewsSource {
 }
 
 export default function HomeScreen(): React.JSX.Element {
-  const [title, setTitle] = useState<string>(NewsSource.VnExpress);
+  // const [title, setTitle] = useState<string>(NewsSource.VnExpress);
   const newsSource = useSelector<RootState>(
     state => state.newsSource,
   ) as string;
@@ -139,7 +139,7 @@ export default function HomeScreen(): React.JSX.Element {
     );
 
     setShowSourcePopover(false);
-    setTitle(source);
+    // setTitle(source);
     dispatch(newsSourceActions.change(source));
     dispatch(categoriesActions.update(categories));
     dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
@@ -167,12 +167,14 @@ export default function HomeScreen(): React.JSX.Element {
           (cat: CategoryInterface) => cat.chosen,
         );
 
-        setTitle(userNewsSource);
+        // setTitle(userNewsSource);
         dispatch(newsSourceActions.change(userNewsSource));
         dispatch(categoriesActions.update(categories));
         dispatch(categoriesActions.changeCurrentCategory(chosenCategory));
         fetchData(userNewsSource, chosenCategory);
       } else {
+        // console.log('create default settings');
+
         // Create new default settings and save to database
         const defaultCategories = {
           vnexpress: VE_CATEGORIES,
@@ -188,6 +190,12 @@ export default function HomeScreen(): React.JSX.Element {
         });
 
         // Fetch news with default setting
+        dispatch(categoriesActions.update(defaultCategories.vnexpress));
+        dispatch(
+          categoriesActions.changeCurrentCategory(
+            defaultCategories.vnexpress[0],
+          ),
+        );
         fetchData(newsSource, chosenCategory);
 
         News.onChange(() => {
@@ -254,7 +262,9 @@ export default function HomeScreen(): React.JSX.Element {
         <View
           style={[styles.container, {backgroundColor: activeColor.primary}]}>
           <HomeHeader
-            title={title === NewsSource.VnExpress ? 'VnExpress' : 'Tuổi Trẻ'}
+            title={
+              newsSource === NewsSource.VnExpress ? 'VnExpress' : 'Tuổi Trẻ'
+            }
             onShowNewsSource={showNewsSourcePopoverHandler}
           />
           {/* Categories */}

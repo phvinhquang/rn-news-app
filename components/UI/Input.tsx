@@ -19,6 +19,7 @@ interface InputProps {
   isPassword?: boolean;
   onGetValue: Function;
   onSetError: Function;
+  onInputBlur?: Function;
   lengthValidation?: Function;
   error: string | boolean;
   showForgotPassword?: boolean;
@@ -34,6 +35,7 @@ function Input({
   error,
   showForgotPassword,
   onSetError,
+  onInputBlur,
   lengthValidation,
 }: InputProps): React.JSX.Element {
   const [input, setInput] = useState<string>('');
@@ -66,6 +68,8 @@ function Input({
     if (input.trim() === '' && isPassword) {
       onSetError(t('emptyPassword'));
     }
+
+    onInputBlur?.(input);
 
     setShowLabel(false);
   }
@@ -204,7 +208,7 @@ const customStyle = (activeColor: any) =>
     },
     forgotPassword: {
       alignSelf: 'flex-end',
-      marginTop: '4%',
+      marginTop: '3%',
       color: activeColor.textPrimary,
     },
   });

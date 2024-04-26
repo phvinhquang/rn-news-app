@@ -72,10 +72,12 @@
   "currentPassword": "Mật khẩu hiện tại",
   "newPassword": "Mật khẩu mới",
   "confirmNewPassword": "Nhập lại mật khẩu mới",
-  "emptyPassword": "Không được để trống password",
+  "emptyPassword": "Không được để trống mật khẩu",
   "passwordLength": "Password phải có ít nhất 6 ký tự",
   "sameNewPassword": "Mật khẩu mới và Nhập lại mật khẩu mới phải trùng nhau",
   "resetPasswordText": "Nhập email của bạn để nhận đường dẫn cài lại mật khẩu",
+  "emptyUsername": "Không được để trống tên đăng nhập",
+  "emptyEmail": "Không được để trống email",
 
   "loggingOut": "Đăng xuất ?",
   "areYouSure": "Bạn chắc chứ ?",

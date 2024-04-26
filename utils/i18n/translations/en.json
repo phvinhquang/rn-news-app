@@ -76,6 +76,8 @@
   "passwordLength": "Password must be at least 6 characters",
   "sameNewPassword": "New password and confirm new password must be the same",
   "resetPasswordText": "Enter your email to be sent a reset password link.",
+  "emptyUsername": "Username must not be empty",
+  "emptyEmail": "Email must not be empty",
 
   "loggingOut": "Log Out ?",
   "areYouSure": "Are you sure ?",
