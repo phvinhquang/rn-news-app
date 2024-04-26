@@ -31,7 +31,7 @@ import {NativeStackParamsList} from '../navigators/Stack';
 import {themeActions} from '../store/theme-slice';
 import {Colors} from '../constants/Color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Users} from '../utils/database';
+import {News, Users} from '../utils/database';
 
 type NavigationProps = StackNavigationProp<NativeStackParamsList>;
 
@@ -178,10 +178,10 @@ export default function SettingsScreen(): React.JSX.Element {
         </View>
       </View>
 
-      {/* <Button
-        title="get theme"
-        onPress={async () => console.log(await AsyncStorage.getItem('theme'))}
-      /> */}
+      <Button
+        title="Get Users"
+        onPress={async () => console.log(await Users.data())}
+      />
     </SafeAreaView>
   );
 }

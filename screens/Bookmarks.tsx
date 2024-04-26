@@ -84,11 +84,11 @@ export default function BookmarksScreen(): React.JSX.Element {
       </View>
 
       {/* <Categories onChangeCategory={changeCategoryHandler} /> */}
-      <Button
+      {/* <Button
         title="Get DB"
         onPress={async () => console.log(await News.data())}
-      />
-      <Button title="Clear DB" onPress={() => News.removeAllRecords()} />
+      /> */}
+      {/* <Button title="Clear DB" onPress={() => News.removeAllRecords()} /> */}
 
       <NewsOverviewList
         bookmarkScreen={true}

@@ -5,6 +5,8 @@
   "settings": "Settings",
   "ago": "ago",
   "by": "By",
+  "somethingWentWrong": "Something went wrong",
+  "couldNotFetchNews": "Could not fetch news",
 
   "home": "Home",
   "world": "World",

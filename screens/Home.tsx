@@ -6,7 +6,6 @@ import {
   Text,
   Button,
   GestureResponderEvent,
-  Appearance,
 } from 'react-native';
 import Categories from '../components/HomeScreen/Categories/Categories';
 import NewsOverviewList from '../components/HomeScreen/NewsOverview/NewsOverviewList';
@@ -28,6 +27,7 @@ import {RootState} from '../store';
 import {useIsFocused} from '@react-navigation/native';
 import {Bookmarks, Users, News} from '../utils/database';
 import {themeActions} from '../store/theme-slice';
+import {useTranslation} from 'react-i18next';
 
 export interface Overview {
   title: string;
@@ -66,15 +66,36 @@ export default function HomeScreen(): React.JSX.Element {
   const userEmail = useSelector<RootState>(
     state => state.authentication.email,
   ) as string;
-  const isFocused = useIsFocused();
-
-  const dispatch = useDispatch();
-
-  // const theme = useColorScheme() ?? 'light';
+  // const isFocused = useIsFocused();
   const theme = useSelector<RootState>(
     state => state.theme,
   ) as keyof typeof Colors;
   const activeColor = Colors[theme];
+  const dispatch = useDispatch();
+  const {t} = useTranslation();
+
+  // Fetch news function
+  const fetchData = useCallback(async function (
+    newsSource: string,
+    chosenCategory: CategoryInterface,
+  ) {
+    setIsLoading(true);
+
+    try {
+      const res = await fetchAndParseRss(
+        newsSource,
+        chosenCategory.url,
+        chosenCategory.name,
+        userEmail,
+      );
+
+      setOverviews(res);
+      setIsLoading(false);
+    } catch (err) {
+      Alert.alert(t('somethingWentWrong'), t('couldNotFetchNews'));
+    }
+  },
+  []);
 
   // Change category handler
   const categoryChangeHandler = async function (
@@ -97,29 +118,6 @@ export default function HomeScreen(): React.JSX.Element {
       console.log(err);
     }
   };
-
-  // Fetch news function
-  const fetchData = useCallback(async function (
-    newsSource: string,
-    chosenCategory: CategoryInterface,
-  ) {
-    setIsLoading(true);
-
-    try {
-      const res = await fetchAndParseRss(
-        newsSource,
-        chosenCategory.url,
-        chosenCategory.name,
-        userEmail,
-      );
-
-      setOverviews(res);
-      setIsLoading(false);
-    } catch (err) {
-      Alert.alert('Something went wrong', 'Could not fetch news');
-    }
-  },
-  []);
 
   // Show news source popover
   const showNewsSourcePopoverHandler = function (pageX: number, pageY: number) {
@@ -237,10 +235,8 @@ export default function HomeScreen(): React.JSX.Element {
         const user = await Users.get({email: userEmail});
         if (user) {
           const theme = user.theme;
-          // console.log('user theme', theme);
 
           dispatch(themeActions.set(theme));
-          // Appearance.setColorScheme(theme);
         }
       } catch (err) {
         console.log(err);

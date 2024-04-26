@@ -47,7 +47,6 @@ const Stack = createNativeStackNavigator<NativeStackParamsList>();
 
 export default function StackNavigator() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  // const [uid, setUid] = useState<string>('');
   const isSignedIn = useSelector<RootState>(
     state => state.authentication.isSignedIn,
   );
@@ -85,8 +84,6 @@ export default function StackNavigator() {
     News.onChange(() => {
       console.log('on changeee');
     });
-
-    // getLanguageFromStorage();
   }, [auth]);
 
   // useLayoutEffect(() => {

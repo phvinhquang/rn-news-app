@@ -42,8 +42,8 @@ export default function ChangePassword(): React.JSX.Element {
     try {
       await updatePasswordAPI(currentPassword, confirmNewPassword);
 
-      await signOutAPI();
-      dispatch(authActions.logout());
+      signOutAPI().then(() => dispatch(authActions.logout()));
+      // dispatch(authActions.logout());
     } catch (err) {
       const error = err as Error;
       if (error.message === 'auth/wrong-password') {

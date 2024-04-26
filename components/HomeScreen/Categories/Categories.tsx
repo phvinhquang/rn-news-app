@@ -1,19 +1,12 @@
 import {View, FlatList, StyleSheet} from 'react-native';
 import CategoryItem from './CategoryItem';
-import {useEffect, useState, useRef, useLayoutEffect} from 'react';
-import {
-  CATEGORIES,
-  TT_CATEGORIES,
-  VE_CATEGORIES,
-} from '../../../constants/Categories';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type {CategoryInterface, Catergory} from '../../../constants/Categories';
+import {useEffect, useRef, useLayoutEffect} from 'react';
+import type {CategoryInterface} from '../../../constants/Categories';
 import {useSelector, useDispatch} from 'react-redux';
 import {createSelector} from '@reduxjs/toolkit';
 
 import {RootState} from '../../../store';
 import {categoriesActions} from '../../../store/categories-slice';
-import {NewsSource} from '../../../screens/Home';
 
 interface CategoriesProps {
   newsSource: string;
@@ -46,11 +39,9 @@ export default function Categories({
     onChangeCategory(newsSource, category);
   }
 
-  // Check if current chosen category is not chosen
+  // Check if current chosen category is not shown
   // If true, back to 1st category available
   useEffect(() => {
-    // console.log('infinity');
-
     const isShown = categories.find(cat => cat.name === chosenCategory.name);
     if (!isShown) {
       dispatch(categoriesActions.changeCurrentCategory(categories[0]));
@@ -59,6 +50,7 @@ export default function Categories({
     }
   }, [categories]);
 
+  // Scroll to top when news source changes
   useEffect(() => {
     flatlistRef.current?.scrollToOffset({animated: true, offset: 0});
   }, [newsSource]);
