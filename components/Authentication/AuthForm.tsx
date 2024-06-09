@@ -1,18 +1,25 @@
-import {StyleSheet, View, Text, useWindowDimensions, Alert} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  useWindowDimensions,
+  Alert,
+  useColorScheme,
+  KeyboardAvoidingView,
+} from 'react-native';
 import Input from '../UI/Input';
 import CustomButton from '../UI/CustomButton';
 import {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {NativeStackParamsList} from '../../navigators/Stack';
 import {signInAPI, signUpAPI} from '../../utils/api';
 import {useDispatch} from 'react-redux';
 import {authActions} from '../../store/auth-slice';
+import {useTranslation} from 'react-i18next';
 
 interface AuthFormProps {
   signIn?: boolean;
 }
-type StackNavigatorProp = StackNavigationProp<NativeStackParamsList, 'SignUp'>;
 
 function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
   const [username, setUsername] = useState<string>('');
@@ -20,17 +27,31 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [usernameError, setUsernameError] = useState<string | boolean>(false);
   const [emailError, setEmailError] = useState<string | boolean>(false);
   const [passwordError, setPasswordError] = useState<string | boolean>(false);
+  const {t} = useTranslation();
   const dispatch = useDispatch();
 
-  const navigation = useNavigation<StackNavigatorProp>();
   const {height} = useWindowDimensions();
 
   // Simple validation
   const inputsNotEmpty = username && email && password;
 
-  // Sign up event handler
+  const usernameBlurHandler = function (value: string) {
+    if (value.trim() === '') setUsernameError(t('emptyUsername'));
+  };
+
+  const emailBlurHandler = function (value: string) {
+    if (value.trim() === '') setEmailError(t('emptyEmail'));
+  };
+
+  // Length validation (at least 6 characters)
+  const passwordLengthValidation = function (value: string) {
+    return value.trim().length < 6;
+  };
+
+  // Sign up/ sign in event handler
   async function submitHandler() {
     setIsLoading(true);
     try {
@@ -41,22 +62,21 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
         // Save token if there is one
         if (result?.token) {
           // Use redux
-          dispatch(authActions.login({token: result.token}));
+          dispatch(authActions.login({token: result.token, email: email}));
         }
       } else {
         // Send HTTP request to signup
         await signUpAPI(username, email, password);
-        // Navigate to Choose Interest Screen
       }
     } catch (e: any) {
       if (e.message === 'auth/email-already-in-use')
-        setEmailError('Email already in use. Please choose another email');
+        setEmailError(t('emailAlreadyUsed'));
       if (e.message === 'auth/user-not-found') {
-        setEmailError('Email error');
+        setEmailError(t('emailNotFound'));
         setShowUsernameInput(false);
       }
       if (e.message === 'auth/wrong-password') {
-        setPasswordError('Incorrect password');
+        setPasswordError(t('incorrectPassword'));
         setShowUsernameInput(false);
       }
     } finally {
@@ -70,45 +90,53 @@ function AuthForm({signIn}: AuthFormProps): React.JSX.Element {
   };
 
   return (
-    <View style={styles.root}>
-      <View>
-        {showUsernameInput && (
+    <KeyboardAvoidingView
+      style={{width: '100%', alignItems: 'center'}}
+      behavior="height">
+      <View style={styles.root}>
+        <View>
+          {showUsernameInput && (
+            <View>
+              <Input
+                title={t('username')}
+                onGetValue={setUsername}
+                error={usernameError}
+                onSetError={setUsernameError}
+                onInputBlur={usernameBlurHandler}
+              />
+            </View>
+          )}
           <View>
             <Input
-              title="Username"
-              onGetValue={setUsername}
-              error={false}
-              onSetError={() => {}}
+              title="Email"
+              onGetValue={setEmail}
+              error={emailError}
+              onSetError={setEmailError}
+              onInputBlur={emailBlurHandler}
             />
           </View>
-        )}
-        <View>
-          <Input
-            title="Email"
-            onGetValue={setEmail}
-            error={emailError}
-            onSetError={setEmailError}
-          />
+          <View>
+            <Input
+              title={t('password')}
+              isPassword={true}
+              onGetValue={setPassword}
+              error={passwordError}
+              onSetError={setPasswordError}
+              showForgotPassword={signIn}
+              lengthValidation={!signIn ? passwordLengthValidation : () => {}}
+            />
+          </View>
         </View>
-        <View>
-          <Input
-            title="Password"
-            isPassword={true}
-            onGetValue={setPassword}
-            error={passwordError}
-            onSetError={setPasswordError}
-          />
-        </View>
-      </View>
 
-      <CustomButton
-        style={buttonVerticalMarigin}
-        title={signIn ? 'Sign In' : 'Sign Up'}
-        isLoading={isLoading}
-        disabled={!inputsNotEmpty}
-        onPress={submitHandler}
-      />
-    </View>
+        <CustomButton
+          style={buttonVerticalMarigin}
+          title={signIn ? t('signIn') : t('signUp')}
+          isLoading={isLoading}
+          disabled={!inputsNotEmpty}
+          onPress={submitHandler}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 

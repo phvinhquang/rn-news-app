@@ -5,6 +5,7 @@ import {
   initializeAuth,
   getReactNativePersistence,
   getAuth,
+  reauthenticateWithCredential,
 } from 'firebase/auth';
 
 let firebaseApp: any;

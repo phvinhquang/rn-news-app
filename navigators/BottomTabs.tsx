@@ -11,18 +11,19 @@ import BookmarksIconActive from '../assets/bottom-tab/bookmark.png';
 import BookmarksIcon from '../assets/bottom-tab/bookmark_unselected.png';
 import SettingIconActive from '../assets/bottom-tab/settings.png';
 import SettingIcon from '../assets/bottom-tab/settings_unselected.png';
-import BottomTabIcon from '../components/UI/BottomTabIcon';
-import HomeHeader from '../components/HomeScreen/Header';
+import Icon from '../components/UI/Icon';
 
 // Import Components
 import HomeScreen from '../screens/Home';
-import SearchScreen from '../screens/Search';
 import BookmarksScreen from '../screens/Bookmarks';
 import SettingsScreen from '../screens/Settings';
+import SeenScreen from '../screens/SeenScreen';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store';
 
 export type BottomTabsParamsList = {
   HomeScreen: undefined;
-  SearchScreen: undefined;
+  SeenScreen: undefined;
   BookmarksScreen: undefined;
   SettingsScreen: undefined;
   // Profile: {userId: string};
@@ -32,7 +33,10 @@ export type BottomTabsParamsList = {
 const BottomTabs = createBottomTabNavigator<BottomTabsParamsList>();
 
 export default function BottomTabsNavigator() {
-  const theme = useColorScheme() ?? 'light';
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
 
   return (
@@ -52,33 +56,33 @@ export default function BottomTabsNavigator() {
           borderTopWidth: 0,
           backgroundColor: activeColor.primary,
         },
-        tabBarActiveTintColor: 'black',
+        // tabBarActiveTintColor: 'black',
       }}>
       <BottomTabs.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          headerShown: true,
-          header: () => <HomeHeader />,
+          headerShown: false,
+          // header: () => <HomeHeader title="VnExpress" />,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={HomeIcon} />;
+              return <Icon source={HomeIcon} />;
             } else {
-              return <BottomTabIcon source={HomeIconActive} />;
+              return <Icon source={HomeIconActive} />;
             }
           },
         }}
       />
       <BottomTabs.Screen
-        name="SearchScreen"
-        component={SearchScreen}
+        name="SeenScreen"
+        component={SeenScreen}
         options={{
-          // headerShown: false,
+          headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={SearchIcon} />;
+              return <Icon source={SearchIcon} />;
             } else {
-              return <BottomTabIcon source={SearchIconActice} />;
+              return <Icon source={SearchIconActice} />;
             }
           },
         }}
@@ -90,9 +94,9 @@ export default function BottomTabsNavigator() {
           headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={BookmarksIcon} />;
+              return <Icon source={BookmarksIcon} />;
             } else {
-              return <BottomTabIcon source={BookmarksIconActive} />;
+              return <Icon source={BookmarksIconActive} />;
             }
           },
         }}
@@ -104,9 +108,9 @@ export default function BottomTabsNavigator() {
           headerShown: false,
           tabBarIcon: ({focused}) => {
             if (!focused) {
-              return <BottomTabIcon source={SettingIcon} />;
+              return <Icon source={SettingIcon} />;
             } else {
-              return <BottomTabIcon source={SettingIconActive} />;
+              return <Icon source={SettingIconActive} />;
             }
           },
         }}

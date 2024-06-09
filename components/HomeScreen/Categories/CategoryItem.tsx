@@ -1,28 +1,32 @@
 import {Pressable, View, Text, StyleSheet, useColorScheme} from 'react-native';
 import {Colors} from '../../../constants/Color';
+import type {Catergory} from '../../../constants/Categories';
+import {useTranslation} from 'react-i18next';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../store';
 
 type CategoryItemProps = {
-  title: string;
-  onCatPress(category: string): void;
+  data: Catergory;
+  onCatPress(): void;
   highlight: boolean;
 };
 
 export default function CategoryItem({
-  title,
+  data,
   highlight,
   onCatPress,
 }: CategoryItemProps): React.JSX.Element {
-  function categoryPressedHandler(category: string): void {
-    onCatPress(category);
-  }
-
-  const theme = useColorScheme() ?? 'light';
+  // const theme = useColorScheme() ?? 'light';
+  const theme = useSelector<RootState>(
+    state => state.theme,
+  ) as keyof typeof Colors;
   const activeColor = Colors[theme];
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={() => categoryPressedHandler(title)}
+        onPress={onCatPress}
         style={[
           styles.pressable,
           {backgroundColor: activeColor.secondary},
@@ -33,7 +37,7 @@ export default function CategoryItem({
             {color: activeColor.textPrimary, fontSize: 16},
             highlight && {color: activeColor.primary},
           ]}>
-          {title}
+          {t(data.name)}
         </Text>
       </Pressable>
     </View>
